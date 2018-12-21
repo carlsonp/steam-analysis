@@ -90,6 +90,13 @@ Backup all Mongo records to an archive.
 mongodump --archive=./backups/steam-`date +"%m-%d-%y"`.archive --db steam
 ```
 
+### Mongo Restore
+
+Restore all Mongo records from an archive.
+
+```
+mongorestore -h 127.0.0.1:27017 --drop -vvvvvv -d steam --archive=/home/carlsonp/src/steam-analysis/backups/steam-12-16-18.archive
+```
 
 ### Spark
 
