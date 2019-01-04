@@ -1,5 +1,12 @@
 # Steam Analysis
 
+
+### Python Libraries
+
+```
+pip3 install pymongo progressbar2 requests schedule beautifulsoup4
+```
+
 ### Mongo Queries
 
 Find all sales
@@ -111,3 +118,24 @@ Start work node
 ```
 ~/spark-2.3.1-bin-hadoop2.7/sbin$ ./start-slave.sh 192.168.1.171:7077
 ```
+
+### Mongo
+
+Grab Mongo from Docker
+```
+docker pull mongo
+```
+
+Start Mongo via Docker and bind the port to be accessible via networking
+```
+docker run -p 27017:27017 --name mongo -d mongo:latest
+```
+
+### Raspberry Pi
+
+https://wiki.debian.org/RaspberryPi3
+https://github.com/Debian/raspi3-image-spec
+https://hub.docker.com/_/mongo/
+
+Flash image with Etcher:
+https://www.balena.io/etcher/
