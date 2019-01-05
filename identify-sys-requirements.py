@@ -46,7 +46,7 @@ try:
         for os in ["pc_requirements", "mac_requirements", "linux_requirements"]:
             if (app[os]):
                 to_write[os] = {}
-                to_write[os + "_org"] = app[os]
+                to_write[os + "_orig"] = app[os]
                 for req in ['minimum', 'recommended']:
                     if (req in app[os]):
                         html_cleaned = re.compile(r'<[^<]+?>').sub('', app[os][req])
