@@ -27,15 +27,11 @@ def updatePriceHistory(pbar=False):
 	# https://stackoverflow.com/questions/13784059/how-to-get-the-price-of-an-app-in-steam-webapi
 
 	# find prices for all games and dlc
-	ret = collection_apps.find({"updated_date": {"$exists": True},
+	to_update = collection_apps.distinct("appid", {"updated_date": {"$exists": True},
 							"type": {"$in": ["game", "dlc"]},
 							"is_free": False,
-							"price_overview": {"$exists": True},
-							}, {"appid":1})
-	# convert to list
-	to_update = []
-	for v in ret:
-		to_update.append(v['appid'])
+							"price_overview": {"$exists": True}
+							})
 
 	if (pbar):
 		bar = progressbar.ProgressBar(max_value=len(to_update)).start()
