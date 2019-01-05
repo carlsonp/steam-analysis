@@ -10,7 +10,7 @@ schedule.every(23).hours.do(steamusers.steamUsers)
 schedule.every(48).hours.do(updatepricehistory.updatePriceHistory)
 schedule.every(24).hours.do(refreshsteam.refreshSteamAppIDs, "SAMPLING_GAMES", False)
 schedule.every(24).hours.do(refreshsteam.refreshSteamAppIDs, "SAMPLING", False)
-schedule.every(48).hours.do(refreshsteam.refreshSteamAppIDs, "MISSING", False)
+schedule.every(24).hours.do(refreshsteam.refreshSteamAppIDs, "MISSING", False)
 schedule.every(24).hours.do(downloadappids.downloadAllAppIDs)
 
 sec = 0
