@@ -134,8 +134,17 @@ docker run -p 27017:27017 --name mongo -d mongo:latest
 ### Raspberry Pi
 
 https://wiki.debian.org/RaspberryPi3
+
 https://github.com/Debian/raspi3-image-spec
+
 https://hub.docker.com/_/mongo/
 
 Flash image with Etcher:
+
 https://www.balena.io/etcher/
+
+### Running via scheduler
+
+```
+python3 run-schedule.py
+```
