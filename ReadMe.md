@@ -163,3 +163,8 @@ Continue refreshing display of the log file
 ```
 less +F steam-analysis.log
 ```
+
+Check bandwidth usage
+```
+ip -stats -color -human addr
+```
