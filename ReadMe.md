@@ -97,6 +97,12 @@ Backup all Mongo records to an archive.
 mongodump --archive=./backups/steam-`date +"%m-%d-%y"`.archive --db steam
 ```
 
+[Backup all Mongo records to an archive via a Docker container](https://blog.studiointeract.com/mongodump-and-mongorestore-for-mongodb-in-a-docker-container-8ad0eb747c62) (helpful for Mongo 4.X vs. 3.X since mongodump has issues across major version changes).  
+
+```
+docker run --rm --name=mongobackup --link mongo:mongobackup -v /root/src/steam-analysis/backups/:/backup mongo bash -c 'mongodump --archive=/backup/steam-`date +"%m-%d-%y"`.archive --db steam --host mongo:27017'
+```
+
 ### Mongo Restore
 
 Restore all Mongo records from an archive.
