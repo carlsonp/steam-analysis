@@ -4,12 +4,12 @@ from pymongo.errors import BulkWriteError
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 
-def downloadAllAppIDs():
-	print("Downloading All AppIDs")
+def downloadAllAppIDs(pbar=False):
 	logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
 						filename='steam-analysis.log', level=logging.DEBUG)
 	# set the logging level for the requests library
 	logging.getLogger('urllib3').setLevel(logging.WARNING)
+	logging.info("Downloading All AppIDs")
 
 	# downloads a list of every appid and name from the API
 	# and stores in MongoDB collection
@@ -24,11 +24,13 @@ def downloadAllAppIDs():
 	# create an index for appid, this vastly improves performance
 	collection.create_index("appid", unique=True)
 
-	bar = progressbar.ProgressBar(max_value=len(data['applist']['apps'])).start()
+	if (pbar):
+		bar = progressbar.ProgressBar(max_value=len(data['applist']['apps'])).start()
 
 	requests_list = []
 	for i,app in enumerate(data['applist']['apps']):
-		bar.update(i+1)
+		if (pbar):
+			bar.update(i+1)
 		#UpdateOne will keep whatever information already exists
 		requests_list.append(UpdateOne({'appid': int(app['appid'])}, {'$set': app}, upsert=True))
 		# do bulk writes in batches, instead of one at a time
@@ -38,8 +40,9 @@ def downloadAllAppIDs():
 				requests_list = []
 			except BulkWriteError as bwe:
 				logging.error(bwe)
-	bar.finish()
+	if (pbar):
+		bar.finish()
 	logging.info("Finished downloading AppIDs.")
 
 if __name__== "__main__":
-    downloadAllAppIDs()
+    downloadAllAppIDs(pbar=True)

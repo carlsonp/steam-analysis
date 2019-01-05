@@ -148,3 +148,18 @@ https://www.balena.io/etcher/
 ```
 python3 run-schedule.py
 ```
+
+Run in the background
+```
+python3 run-schedule.py &
+```
+
+Check the status of the background task
+```
+top -p `pgrep "python3"`
+```
+
+Continue refreshing display of the log file
+```
+less +F steam-analysis.log
+```

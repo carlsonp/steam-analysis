@@ -3,12 +3,12 @@ from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 
-def updatePriceHistory():
-	print("Updating Price History")
+def updatePriceHistory(pbar=False):
 	logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
 						filename='steam-analysis.log', level=logging.DEBUG)
 	# set the logging level for the requests library
 	logging.getLogger('urllib3').setLevel(logging.WARNING)
+	logging.info("Updating Price History")
 
 	client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
 	client = MongoClient()
@@ -37,7 +37,8 @@ def updatePriceHistory():
 	for v in ret:
 		to_update.append(v['appid'])
 
-	bar = progressbar.ProgressBar(max_value=len(to_update)).start()
+	if (pbar):
+		bar = progressbar.ProgressBar(max_value=len(to_update)).start()
 
 	# shuffle the appids so we hit new ones each time
 	random.shuffle(to_update) #in-place
@@ -45,7 +46,8 @@ def updatePriceHistory():
 	appids = []
 	for i,appid in enumerate(to_update):
 		appids.append(appid)
-		bar.update(i+1)
+		if (pbar):
+			bar.update(i+1)
 		# run 20 or so at a time
 		if ((i+1) % 20 == 0 or (i+1) == len(to_update)):
 			try:
@@ -82,8 +84,9 @@ def updatePriceHistory():
 			# 100,000 requests per day
 			time.sleep(1.75) #seconds
 
-	bar.finish()
+	if (pbar):
+		bar.finish()
 	logging.info("Finished updating price history.")
 
 if __name__== "__main__":
-	updatePriceHistory()
+	updatePriceHistory(pbar=True)

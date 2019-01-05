@@ -3,12 +3,12 @@ from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 
-def refreshSteamAppIDs(refresh_type="SAMPLING"):
-	print("Updating AppIDs via " + refresh_type)
+def refreshSteamAppIDs(refresh_type="SAMPLING", pbar=False):
 	logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
 						filename='steam-analysis.log', level=logging.DEBUG)
 	# set the logging level for the requests library
 	logging.getLogger('urllib3').setLevel(logging.WARNING)
+	logging.info("Updating AppIDs via " + refresh_type)
 
 	client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
 	client = MongoClient()
@@ -45,13 +45,15 @@ def refreshSteamAppIDs(refresh_type="SAMPLING"):
 		for v in ret:
 			to_update.append(v['appid'])
 
-	bar = progressbar.ProgressBar(max_value=len(to_update)).start()
+	if (pbar):
+		bar = progressbar.ProgressBar(max_value=len(to_update)).start()
 
 	# shuffle the appids so we hit new ones each time
 	random.shuffle(to_update) #in-place
 
 	for i,appid in enumerate(to_update):
-		bar.update(i+1)
+		if (pbar):
+			bar.update(i+1)
 		data = requests.get("https://store.steampowered.com/api/appdetails?appids="+str(appid)+"&cc=us&l=en").json()
 
 		for k,value in data.items():
@@ -88,7 +90,8 @@ def refreshSteamAppIDs(refresh_type="SAMPLING"):
 		# 10 requests every 10 seconds
 		# 100,000 requests per day
 		time.sleep(1.75) #seconds
-	bar.finish()
+	if (pbar):
+		bar.finish()
 	logging.info("Finished updating AppIDs via " + refresh_type)
 
 
@@ -97,4 +100,4 @@ if __name__== "__main__":
 	# FULL: do a full refresh of all entries
 	# MISSING: only donwload records that do not have an entry in apps
 	# GAMES: do a refresh of all games/dlc information already in the database
-	refreshSteamAppIDs(refresh_type="SAMPLING")
+	refreshSteamAppIDs(refresh_type="SAMPLING", pbar=True)

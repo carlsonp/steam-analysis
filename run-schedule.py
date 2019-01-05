@@ -10,4 +10,6 @@ schedule.every(24).hours.do(downloadappids.downloadAllAppIDs)
 
 while True:
     schedule.run_pending()
+    # for job in schedule.jobs:
+    #     print(job)
     time.sleep(1) # seconds

@@ -4,12 +4,12 @@ from bs4 import BeautifulSoup
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 
-def steamTopGames():
-    print("Running Steam Top Games")
+def steamTopGames(pbar=False):
     logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
 					filename='steam-analysis.log', level=logging.DEBUG)
     # set the logging level for the requests library
     logging.getLogger('urllib3').setLevel(logging.WARNING)
+    logging.info("Running Steam Top Games")
 
     client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
 
@@ -27,11 +27,13 @@ def steamTopGames():
     soup = BeautifulSoup(r.text, 'html.parser')
     rows = soup.find_all('tr', class_="player_count_row")
 
-    bar = progressbar.ProgressBar(max_value=len(rows)).start()
+    if (pbar):
+        bar = progressbar.ProgressBar(max_value=len(rows)).start()
 
     try:
         for i,row in enumerate(rows):
-            bar.update(i+1)
+            if (pbar):
+                bar.update(i+1)
 
             towrite = dict()
             towrite['date'] = datetime.datetime.utcnow()
@@ -52,11 +54,12 @@ def steamTopGames():
             towrite['peaktoday'] = int(online[1].text.replace(",", ""))
 
             collection.insert_one(towrite)
-        bar.finish()
+        if (pbar):
+            bar.finish()
         logging.info("Finished downloading top games.")
     except Exception as e:
         logging.error(str(e))
 
 
 if __name__== "__main__":
-    steamTopGames()
+    steamTopGames(pbar=True)
