@@ -1,11 +1,11 @@
-import string, re, sys
+import string, re, sys, random
 from pymongo import MongoClient
 from nltk.corpus import stopwords # pip3 install nltk
 from nltk.stem.wordnet import WordNetLemmatizer
 import gensim # pip3 install gensim
 from gensim import corpora
 import pyLDAvis.gensim # pip3 install pyLDAvis, IPython
-import config
+import config # config.py
 # python3
 # >>> import nltk
 # >>> nltk.download('popular')
@@ -22,11 +22,14 @@ db = client['steam']
 collection = db['apps']
 
 ret = collection.find({"updated_date": {"$exists": True}, "type": {"$in": ["game", "dlc"]}},
-                        {"detailed_description":1})#.limit(500)
+                        {"detailed_description":1})
 descriptions = []
 for v in ret:
     descriptions.append(v['detailed_description'])
 
+random.shuffle(descriptions) #in-place
+# take a subset
+descriptions = descriptions[:100]
 
 stop = set(stopwords.words('english'))
 exclude = set(string.punctuation)
