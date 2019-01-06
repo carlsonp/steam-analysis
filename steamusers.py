@@ -17,7 +17,7 @@ def steamUsers(pbar=False):
     collection = db['steamusers']
 
     collection.create_index("epochint", unique=True)
-    collection.create_index("date", unique=True)
+    collection.create_index("date")
 
     # pull Steam online users over the last 24 hours
     # https://store.steampowered.com/stats/
