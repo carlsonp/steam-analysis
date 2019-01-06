@@ -17,6 +17,7 @@ def steamTopGames(pbar=False):
     collection = db['topgames']
 
     collection.create_index("appid", unique=False)
+    collection.create_index("date")
 
     # pull Steam top 100 games
     # https://store.steampowered.com/stats/
