@@ -1,9 +1,8 @@
 # Steam Analysis
 
-
 ### Python Libraries
 
-```
+```shell
 pip3 install pymongo progressbar2 requests schedule beautifulsoup4
 ```
 
@@ -38,7 +37,7 @@ db.apps.aggregate(
             {
                 _id: "$developers",
                 "avgMetacritic": {$avg: "$metacritic.score"},
-		"countMetacritic": {$sum: 1}
+                "countMetacritic": {$sum: 1}
             }
     },
     {'$match': {'avgMetacritic': {'$ne': null}}}
@@ -59,7 +58,7 @@ db.apps.count({"failureCount":{"$gte":3}})
 
 ### Links
 
-#### Additional Datasets and APIs:
+#### Additional Datasets and APIs
 
 https://towardsdatascience.com/predicting-hit-video-games-with-ml-1341bd9b86b0
 
@@ -71,8 +70,7 @@ https://www.giantbomb.com/api/
 
 https://igdb.github.io/api/
 
-
-#### Time Series Forecasting:
+#### Time Series Forecasting
 
 https://facebook.github.io/prophet/
 
@@ -88,18 +86,17 @@ https://github.com/BrakeValve/dataflow/issues/5
 
 http://steamwebapi.azurewebsites.net/
 
-
 ### Mongo Backup
 
 Backup all Mongo records to an archive.
 
-```
+```shell
 mongodump --archive=./backups/steam-`date +"%m-%d-%y"`.archive --db steam
 ```
 
 [Backup all Mongo records to an archive via a Docker container](https://blog.studiointeract.com/mongodump-and-mongorestore-for-mongodb-in-a-docker-container-8ad0eb747c62) (helpful for Mongo 4.X vs. 3.X since mongodump has issues across major version changes).  
 
-```
+```shell
 docker run --rm --name=mongobackup --link mongo:mongobackup -v /root/src/steam-analysis/backups/:/backup mongo bash -c 'mongodump --archive=/backup/steam-`date +"%m-%d-%y"`.archive --db steam --host mongo:27017'
 ```
 
@@ -107,7 +104,7 @@ docker run --rm --name=mongobackup --link mongo:mongobackup -v /root/src/steam-a
 
 Restore all Mongo records from an archive.
 
-```
+```shell
 mongorestore -h 127.0.0.1:27017 --drop -vvvvvv -d steam --archive=/home/carlsonp/src/steam-analysis/backups/steam-12-16-18.archive
 ```
 
@@ -115,25 +112,27 @@ mongorestore -h 127.0.0.1:27017 --drop -vvvvvv -d steam --archive=/home/carlsonp
 
 Start master node
 
-```
+```shell
 ~/spark-2.3.1-bin-hadoop2.7/sbin$ ./start-master.sh --host 192.168.1.171
 ```
 
 Start work node
 
-```
+```shell
 ~/spark-2.3.1-bin-hadoop2.7/sbin$ ./start-slave.sh 192.168.1.171:7077
 ```
 
 ### Mongo
 
 Grab Mongo from Docker
-```
+
+```shell
 docker pull mongo
 ```
 
 Start Mongo via Docker and bind the port to be accessible via networking
-```
+
+```shell
 docker run -p 27017:27017 --name mongo -d mongo:latest
 ```
 
@@ -151,26 +150,32 @@ https://www.balena.io/etcher/
 
 ### Running via scheduler
 
-```
+Run normally
+
+```shell
 python3 run-schedule.py
 ```
 
 Run in the background
-```
+
+```shell
 python3 run-schedule.py &
 ```
 
 Check the status of the background task
-```
+
+```shell
 top -p `pgrep "python3"`
 ```
 
 Continue refreshing display of the log file
-```
+
+```shell
 less +F steam-analysis.log
 ```
 
 Check bandwidth usage
-```
+
+```shell
 ip -stats -color -human addr
 ```
