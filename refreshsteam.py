@@ -80,8 +80,9 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 					# add current datetimestamp
 					value['data']['updated_date'] = datetime.datetime.utcnow()
 					try:
-						# fix release_date -> date, change from string to ISODate() for Mongo
-						value['data']['release_date']['date'] = datetime.datetime.strptime(value['data']['release_date']['date'], "%b %d, %Y")
+						if (value['data']['release_date']['date'] != ""):
+							# fix release_date -> date, change from string to ISODate() for Mongo
+							value['data']['release_date']['date'] = datetime.datetime.strptime(value['data']['release_date']['date'], "%b %d, %Y")
 					except ValueError as ve:
 						logging.warning(ve)
 						# do nothing, we couldn't parse the date
