@@ -17,7 +17,7 @@ def steamTopGames(pbar=False):
     collection = db['topgames']
 
     collection.create_index("appid", unique=False)
-    collection.create_index("date")
+    collection.create_index("date", unique=False)
 
     # pull Steam top 100 games
     # https://store.steampowered.com/stats/
@@ -32,12 +32,13 @@ def steamTopGames(pbar=False):
         bar = progressbar.ProgressBar(max_value=len(rows)).start()
 
     try:
+        date_now = datetime.datetime.utcnow()
         for i,row in enumerate(rows):
             if (pbar):
                 bar.update(i+1)
 
             towrite = dict()
-            towrite['date'] = datetime.datetime.utcnow()
+            towrite['date'] = date_now
 
             link = row.find_all('a', class_="gameLink")
 
