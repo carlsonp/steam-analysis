@@ -30,13 +30,18 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 		to_update = []
 		if (refresh_type == "FULL"):
 			to_update = collection.distinct("appid", {})
-		if (refresh_type == "ALL_NON_FAILURE" or refresh_type == "SAMPLING"):
+		elif (refresh_type == "ALL_NON_FAILURE" or refresh_type == "SAMPLING"):
 			# see all appids that have had failures in descending order
 			# db.getCollection('apps').find({"failureCount": {"$exists": true}}).sort({"failureCount":-1})
 			# when the failureCount gets to 3 or higher, stop trying to pull data any more
-			to_update = collection.distinct("appid", {
-														"$or": [{"failureCount": {"$lt": 3}}, {"failureCount": {"$exists": False}}]
-													})
+			# pull the oldest most "stale" entries first
+			to_update = collection.find(
+											{
+												"$or": [{"failureCount": {"$lt": 3}}, {"failureCount": {"$exists": False}}]
+											},
+											{"appid":1, "updated_date":1, "_id":False}
+										).sort("updated_date",1)
+			to_update = ([item['appid'] for item in to_update])
 		elif (refresh_type == "MISSING"):
 			# count of missing entries
 			# db.getCollection('apps').count({"updated_date": {"$exists": false}})
@@ -53,8 +58,9 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 		if (pbar):
 			bar = progressbar.ProgressBar(max_value=len(to_update)).start()
 
-		# shuffle the appids so we hit new ones each time
-		random.shuffle(to_update) #in-place
+		if (refresh_type != "ALL_NON_FAILURE"):
+			# shuffle the appids so we hit new ones each time
+			random.shuffle(to_update) #in-place
 
 		if (refresh_type == "SAMPLING" or refresh_type == "SAMPLING_GAMES"):
 			# take only a small sampling of appids
@@ -109,7 +115,7 @@ if __name__== "__main__":
 	# SAMPLING: run on a random sampling of 100 entries of any type
 	# SAMPLING_GAMES: run on a random sampling of 100 games/dlc
 	# FULL: do a full refresh of all entries, including those that have hit the failureCount limit in the past
-	# ALL_NON_FAILURE: refresh all entries of any type that have not hit the failureCount limit
+	# ALL_NON_FAILURE: refresh all entries of any type that have not hit the failureCount limit and prioritizing the oldest
 	# MISSING: only download records that do not have an entry in apps
 	# GAMES: do a refresh of all games/dlc information already in the database
-	refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=True)
+	refreshSteamAppIDs(refresh_type="ALL_NON_FAILURE", pbar=True)
