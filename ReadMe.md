@@ -50,10 +50,10 @@ Find price history records ordered by the most recent
 db.pricehistory.find({}).sort({"date":-1})
 ```
 
-Number of records that we are skipping due to inability to get information
+Find when the apps collection was most recently updated
 
 ```
-db.apps.count({"failureCount":{"$gte":3}})
+db.apps.find({}, {"updated_date":1}).sort({"updated_date":-1})
 ```
 
 ### Links
