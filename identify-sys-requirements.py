@@ -3,7 +3,7 @@ from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
-					filename='steam-analysis.log', level=logging.DEBUG)
+					filename='system-requirements.log', level=logging.DEBUG)
 
 
 client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
@@ -13,7 +13,7 @@ collection_reqs = db['systemreqs']
 
 # create an index for appid, this vastly improves performance
 collection_reqs.create_index("appid", unique=True)
-
+collection_reqs.create_index("last_updated")
 
 ret = collection_apps.find({}, {"appid":1, "name": 1, "pc_requirements":1,
                             "mac_requirements":1, "linux_requirements":1})
