@@ -16,7 +16,7 @@ schedule.every(24).hours.do(downloadappids.downloadAllAppIDs)
 sec = 0
 while True:
     schedule.run_pending()
-    if sec % 600 == 0: # every roughly 10 minutes save the scheduling information to the log
+    if sec % 1800 == 0: # every roughly 30 minutes save the scheduling information to the log
         for job in schedule.jobs:
             logging.info(str(job))
         sec = 0
