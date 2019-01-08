@@ -33,9 +33,9 @@ def steamUsers(pbar=False):
             for i,users in enumerate(data):
                 if (pbar):
                     bar.update(i+1)
-                # convert Epoch to local time
+                # convert Epoch seconds to UTC time
                 # https://stackoverflow.com/questions/1697815/how-do-you-convert-a-python-time-struct-time-object-into-a-datetime-object
-                conv_time = datetime.datetime.fromtimestamp(time.mktime(time.localtime(int(users[0])/1000)))
+                conv_time = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(users[0])/1000)))
                 #update_one will keep whatever information already exists
                 collection.update_one({'epochint': int(users[0])}, {'$set': {'numberonlineusers': int(users[1]), 'date': conv_time}}, upsert=True)
             if (pbar):
