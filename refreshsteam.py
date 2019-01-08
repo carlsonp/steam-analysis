@@ -50,15 +50,21 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 														"$or": [{"failureCount": {"$lt": 3}}, {"failureCount": {"$exists": False}}]
 													})
 		elif (refresh_type == "GAMES" or refresh_type == "SAMPLING_GAMES"):
-			to_update = collection.distinct("appid", {
-														"type": {"$in": ["game", "dlc"]},
-														"$or": [{"failureCount": {"$lt": 3}}, {"failureCount": {"$exists": False}}]
-													})
+			# when the failureCount gets to 3 or higher, stop trying to pull data any more
+			# pull the oldest most "stale" entries first
+			to_update = collection.find(
+												{
+													"type": {"$in": ["game", "dlc"]},
+													"$or": [{"failureCount": {"$lt": 3}}, {"failureCount": {"$exists": False}}]
+												},
+												{"appid":1, "updated_date":1, "_id":False}
+											).sort("updated_date",1)
+			to_update = ([item['appid'] for item in to_update])
 
 		if (pbar):
 			bar = progressbar.ProgressBar(max_value=len(to_update)).start()
 
-		if (refresh_type != "ALL_NON_FAILURE"):
+		if (refresh_type != "ALL_NON_FAILURE" and refresh_type != "GAMES"):
 			# shuffle the appids so we hit new ones each time
 			random.shuffle(to_update) #in-place
 
@@ -119,9 +125,9 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 
 if __name__== "__main__":
 	# SAMPLING: run on a random sampling of N entries of any type
-	# SAMPLING_GAMES: run on a random sampling of N games/dlc
+	# SAMPLING_GAMES: run on a random sampling of N games/dlc that have not hit the failureCount limit
 	# FULL: do a full refresh of all entries, including those that have hit the failureCount limit in the past
 	# ALL_NON_FAILURE: refresh all entries of any type that have not hit the failureCount limit and prioritizing the oldest
 	# MISSING: only download records that do not have an entry in apps
-	# GAMES: do a refresh of all games/dlc information already in the database
+	# GAMES: do a refresh of all games/dlc information already in the database that have not hit the failureCount limit and prioritizing the oldest
 	refreshSteamAppIDs(refresh_type="ALL_NON_FAILURE", pbar=True)
