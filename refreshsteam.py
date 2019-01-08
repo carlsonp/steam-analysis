@@ -30,6 +30,8 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 		to_update = []
 		if (refresh_type == "FULL"):
 			to_update = collection.distinct("appid", {})
+			# shuffle the appids so we hit new ones each time
+			random.shuffle(to_update) #in-place
 		elif (refresh_type == "ALL_NON_FAILURE" or refresh_type == "SAMPLING"):
 			# see all appids that have had failures in descending order
 			# db.getCollection('apps').find({"failureCount": {"$exists": true}}).sort({"failureCount":-1})
@@ -63,10 +65,6 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 
 		if (pbar):
 			bar = progressbar.ProgressBar(max_value=len(to_update)).start()
-
-		if (refresh_type != "ALL_NON_FAILURE" and refresh_type != "GAMES"):
-			# shuffle the appids so we hit new ones each time
-			random.shuffle(to_update) #in-place
 
 		if (refresh_type == "SAMPLING" or refresh_type == "SAMPLING_GAMES"):
 			# take only a small sampling of appids
@@ -124,8 +122,8 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 		logging.error(str(e))
 
 if __name__== "__main__":
-	# SAMPLING: run on a random sampling of N entries of any type
-	# SAMPLING_GAMES: run on a random sampling of N games/dlc that have not hit the failureCount limit
+	# SAMPLING: run on a sampling of N entries of any type and prioritizing the oldest
+	# SAMPLING_GAMES: run on a sampling of N games/dlc that have not hit the failureCount limit and prioritizing the oldest
 	# FULL: do a full refresh of all entries, including those that have hit the failureCount limit in the past
 	# ALL_NON_FAILURE: refresh all entries of any type that have not hit the failureCount limit and prioritizing the oldest
 	# MISSING: only download records that do not have an entry in apps
