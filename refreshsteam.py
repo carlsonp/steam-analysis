@@ -64,7 +64,7 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 
 		if (refresh_type == "SAMPLING" or refresh_type == "SAMPLING_GAMES"):
 			# take only a small sampling of appids
-			to_update = to_update[:100]
+			to_update = to_update[:300]
 
 		for i,appid in enumerate(to_update):
 			if (pbar):
@@ -118,8 +118,8 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 		logging.error(str(e))
 
 if __name__== "__main__":
-	# SAMPLING: run on a random sampling of 100 entries of any type
-	# SAMPLING_GAMES: run on a random sampling of 100 games/dlc
+	# SAMPLING: run on a random sampling of N entries of any type
+	# SAMPLING_GAMES: run on a random sampling of N games/dlc
 	# FULL: do a full refresh of all entries, including those that have hit the failureCount limit in the past
 	# ALL_NON_FAILURE: refresh all entries of any type that have not hit the failureCount limit and prioritizing the oldest
 	# MISSING: only download records that do not have an entry in apps
