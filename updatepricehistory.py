@@ -53,23 +53,27 @@ def updatePriceHistory(pbar=False):
 					# https://github.com/BrakeValve/dataflow/issues/5
 					# e.g.
 					# https://store.steampowered.com/api/appdetails?appids=662400,833310,317832,39150,830810,224540,931720,261900,431290,914410,812110,216464,826503,509681,71115,24679,231474,202452,863900,457100&cc=us&l=en&filters=price_overview
-					data = requests.get("https://store.steampowered.com/api/appdetails?appids="+appids_str+"&cc=us&l=en&filters=price_overview").json()
+					r = requests.get("https://store.steampowered.com/api/appdetails?appids="+appids_str+"&cc=us&l=en&filters=price_overview")
+					if (r.ok):
+						data = r.json()
 
-					for k,value in data.items():
-						if (value["success"] is True):
-							if (value['data']):
-								price_hist = value['data']['price_overview']
-								# set the appid based on the key
-								price_hist['appid'] = int(k)
-								# add current datetimestamp
-								price_hist['date'] = datetime.datetime.utcnow()
-								collection_hist.insert_one(price_hist)
-							else:
-								# No price_overview information returned, remove it from the entry
-								# to prevent future unnecessary calls.  This is also an indicator
-								# of stale app information.
-								collection_apps.update_one({'appid': int(k)}, {"$unset": {"price_overview":""}})
-								logging.info("No price information returned for appid: " + str(k) + " - clearing app price info.")
+						for k,value in data.items():
+							if (value["success"] is True):
+								if (value['data']):
+									price_hist = value['data']['price_overview']
+									# set the appid based on the key
+									price_hist['appid'] = int(k)
+									# add current datetimestamp
+									price_hist['date'] = datetime.datetime.utcnow()
+									collection_hist.insert_one(price_hist)
+								else:
+									# No price_overview information returned, remove it from the entry
+									# to prevent future unnecessary calls.  This is also an indicator
+									# of stale app information.
+									collection_apps.update_one({'appid': int(k)}, {"$unset": {"price_overview":""}})
+									logging.info("No price information returned for appid: " + str(k) + " - clearing app price info.")
+					else:
+						logging.error("status code: " + str(r.status_code))
 				except Exception as e:
 					logging.error(str(e) + " - appids: " + str(appids_str) + " - data: " + str(value))
 

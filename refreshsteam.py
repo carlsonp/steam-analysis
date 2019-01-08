@@ -69,38 +69,43 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 		for i,appid in enumerate(to_update):
 			if (pbar):
 				bar.update(i+1)
-			data = requests.get("https://store.steampowered.com/api/appdetails?appids="+str(appid)+"&cc=us&l=en").json()
+			r = requests.get("https://store.steampowered.com/api/appdetails?appids="+str(appid)+"&cc=us&l=en")
 
-			for k,value in data.items():
-				# for some reason, querying an appid sometimes yields a different number, e.g. 100 yields 80
-				# it appears that "stale" records/appids can be re-pointed to existing working records
-				if (value["success"] is True and appid == value['data']['steam_appid']):
-					# rename "steam_appid" to "appid" so we insert properly into Mongo
-					value['data']['appid'] = int(value['data'].pop('steam_appid'))
-					# add current datetimestamp
-					value['data']['updated_date'] = datetime.datetime.utcnow()
-					try:
-						if (value['data']['release_date']['date'] != ""):
-							# fix release_date -> date, change from string to ISODate() for Mongo
-							value['data']['release_date']['date'] = datetime.datetime.strptime(value['data']['release_date']['date'], "%b %d, %Y")
-					except ValueError as ve:
-						logging.warning(ve)
-						# do nothing, we couldn't parse the date
-					# replace_one will completely replace the record, this is different than update_one
-					collection.replace_one({'appid': int(value['data']['appid'])}, value['data'], upsert=True)
-
-					if ('price_overview' in value['data']):
-						# add a record to the price history since we grabbed it
-						price_hist = value['data']['price_overview']
-						# set the appid
-						price_hist['appid'] = int(value['data']['appid'])
+			if (r.ok):
+				data = r.json()
+				for k,value in data.items():
+					# for some reason, querying an appid sometimes yields a different number, e.g. 100 yields 80
+					# it appears that "stale" records/appids can be re-pointed to existing working records
+					if (value["success"] is True and appid == value['data']['steam_appid']):
+						# rename "steam_appid" to "appid" so we insert properly into Mongo
+						value['data']['appid'] = int(value['data'].pop('steam_appid'))
 						# add current datetimestamp
-						price_hist['date'] = datetime.datetime.utcnow()
-						collection_hist.insert_one(price_hist)
-				else:
-					# increment the failure record count so we can start pruning off bad data
-					collection.update_one({'appid': int(appid)}, {"$inc": {"failureCount":1}}, upsert=True)
-					logging.info("Failed to get data for appid: " + str(appid) + " - incrementing failureCount.")
+						value['data']['updated_date'] = datetime.datetime.utcnow()
+						try:
+							if (value['data']['release_date']['date'] != ""):
+								# fix release_date -> date, change from string to ISODate() for Mongo
+								value['data']['release_date']['date'] = datetime.datetime.strptime(value['data']['release_date']['date'], "%b %d, %Y")
+						except ValueError as ve:
+							logging.warning(ve)
+							# do nothing, we couldn't parse the date
+						# replace_one will completely replace the record, this is different than update_one
+						collection.replace_one({'appid': int(value['data']['appid'])}, value['data'], upsert=True)
+
+						if ('price_overview' in value['data']):
+							# add a record to the price history since we grabbed it
+							price_hist = value['data']['price_overview']
+							# set the appid
+							price_hist['appid'] = int(value['data']['appid'])
+							# add current datetimestamp
+							price_hist['date'] = datetime.datetime.utcnow()
+							collection_hist.insert_one(price_hist)
+					else:
+						# increment the failure record count so we can start pruning off bad data
+						collection.update_one({'appid': int(appid)}, {"$inc": {"failureCount":1}}, upsert=True)
+						logging.info("Failed to get data for appid: " + str(appid) + " - incrementing failureCount.")
+			else:
+				logging.error("status code: " + str(r.status_code))
+				logging.error("appid: " + str(appid))
 			# sleep for a bit, the API is throttled
 			# limited to 200 requests every 5 minutes or so...
 			# 10 requests every 10 seconds
