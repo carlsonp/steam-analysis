@@ -74,6 +74,7 @@ def updatePriceHistory(pbar=False):
 									logging.info("No price information returned for appid: " + str(k) + " - clearing app price info.")
 					else:
 						logging.error("status code: " + str(r.status_code))
+						logging.error("price history appids: " + appids_str)
 				except Exception as e:
 					logging.error(str(e) + " - appids: " + str(appids_str) + " - data: " + str(value))
 
