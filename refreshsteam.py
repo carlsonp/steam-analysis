@@ -68,7 +68,7 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 
 		if (refresh_type == "SAMPLING" or refresh_type == "SAMPLING_GAMES"):
 			# take only a small sampling of appids
-			to_update = to_update[:300]
+			to_update = to_update[:500]
 
 		for i,appid in enumerate(to_update):
 			if (pbar):
