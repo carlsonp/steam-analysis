@@ -4,29 +4,29 @@ import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 
 def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
-	logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
-						filename='steam-analysis.log', level=logging.DEBUG)
-	# set the logging level for the requests library
-	logging.getLogger('urllib3').setLevel(logging.WARNING)
-	logging.info("Updating AppIDs via " + refresh_type)
-
-	client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
-	client = MongoClient()
-	db = client['steam']
-	collection = db['apps']
-	collection_hist = db['pricehistory']
-
-	# create an index for appid, this vastly improves performance
-	collection.create_index("appid", unique=True)
-	collection.create_index("updated_date")
-
-	# e.g.: CS Source
-	# https://store.steampowered.com/api/appdetails?appids=240&cc=us&l=en
-
-	# https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI#Known_methods
-	# https://stackoverflow.com/questions/13784059/how-to-get-the-price-of-an-app-in-steam-webapi
-
 	try:
+		logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
+							filename='steam-analysis.log', level=logging.DEBUG)
+		# set the logging level for the requests library
+		logging.getLogger('urllib3').setLevel(logging.WARNING)
+		logging.info("Updating AppIDs via " + refresh_type)
+
+		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
+		client = MongoClient()
+		db = client['steam']
+		collection = db['apps']
+		collection_hist = db['pricehistory']
+
+		# create an index for appid, this vastly improves performance
+		collection.create_index("appid", unique=True)
+		collection.create_index("updated_date")
+
+		# e.g.: CS Source
+		# https://store.steampowered.com/api/appdetails?appids=240&cc=us&l=en
+
+		# https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI#Known_methods
+		# https://stackoverflow.com/questions/13784059/how-to-get-the-price-of-an-app-in-steam-webapi
+
 		to_update = []
 		if (refresh_type == "FULL"):
 			to_update = collection.distinct("appid", {})

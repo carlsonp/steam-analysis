@@ -5,24 +5,24 @@ import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 
 def steamUsers(pbar=False):
-    logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
-					filename='steam-analysis.log', level=logging.DEBUG)
-    # set the logging level for the requests library
-    logging.getLogger('urllib3').setLevel(logging.WARNING)
-    logging.info("Running Steam Users Online")
-
-    client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
-
-    db = client['steam']
-    collection = db['steamusers']
-
-    collection.create_index("epochint", unique=True)
-    collection.create_index("date", unique=True)
-
-    # pull Steam online users over the last 24 hours
-    # https://store.steampowered.com/stats/
-
     try:
+        logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
+                        filename='steam-analysis.log', level=logging.DEBUG)
+        # set the logging level for the requests library
+        logging.getLogger('urllib3').setLevel(logging.WARNING)
+        logging.info("Running Steam Users Online")
+
+        client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
+
+        db = client['steam']
+        collection = db['steamusers']
+
+        collection.create_index("epochint", unique=True)
+        collection.create_index("date", unique=True)
+
+        # pull Steam online users over the last 24 hours
+        # https://store.steampowered.com/stats/
+
         r = requests.get("https://store.steampowered.com/stats/userdata.json")
         if (r.ok):
             data = r.json()[0]['data']

@@ -5,20 +5,20 @@ import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 
 def downloadAllAppIDs(pbar=False):
-	logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
-						filename='steam-analysis.log', level=logging.DEBUG)
-	# set the logging level for the requests library
-	logging.getLogger('urllib3').setLevel(logging.WARNING)
-	logging.info("Downloading All AppIDs")
-
-	# downloads a list of every appid and name from the API
-	# and stores in MongoDB collection
-
-	client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
-	db = client['steam']
-	collection = db['apps']
-
 	try:
+		logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
+							filename='steam-analysis.log', level=logging.DEBUG)
+		# set the logging level for the requests library
+		logging.getLogger('urllib3').setLevel(logging.WARNING)
+		logging.info("Downloading All AppIDs")
+
+		# downloads a list of every appid and name from the API
+		# and stores in MongoDB collection
+
+		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
+		db = client['steam']
+		collection = db['apps']
+	
 		r = requests.get("https://api.steampowered.com/ISteamApps/GetAppList/v0002/")
 
 		if (r.ok):
