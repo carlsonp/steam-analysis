@@ -243,11 +243,18 @@ WorkingDirectory=/root/src/steam-analysis/
 WantedBy=multi-user.target
 ```
 
-Enable the services, this will create the appropriate symlinks
+Enable the services which will start it each boot.  This will create the appropriate symlinks.
 
 ```shell
 systemctl enable mongodocker
 systemctl enable steamanalysis
+```
+
+Start the services
+
+```shell
+systemctl start mongodocker
+systemctl start steamanalysis
 ```
 
 Check the status of each service
