@@ -202,7 +202,7 @@ on the Raspberry Pi 3.
 These will automatically restart if they're killed off or fail.  They will also
 launch on startup.
 
-Create a service for Mongo by creating a new file (contents below)
+Create a service for Mongo by creating a new file (contents below).
 
 ```shell
 $ cat /etc/systemd/system/mongodocker.service 
@@ -210,19 +210,21 @@ $ cat /etc/systemd/system/mongodocker.service
 Description=Mongo via Docker
 After=network.target
 StartLimitIntervalSec=0
+Requires=docker.service
+Wants=network-online.target docker.socket
 
 [Service]
-Type=forking
 Restart=always
-RestartSec=1
 User=root
-ExecStart=docker start mongo
+ExecStart=docker start -a mongo
+ExecStop=docker stop mongo
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-Create a service for the Python scheduler by creating a new file (contents below)
+Create a service for the Python scheduler by creating a new file (contents below).
+The pre sleep ensures Mongo is up and running before we start.
 
 ```shell
 $ cat /etc/systemd/system/steamanalysis.service 
@@ -236,6 +238,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=root
+ExecStartPre=/bin/sleep 50
 ExecStart=python3 -u /root/src/steam-analysis/run-schedule.py &
 WorkingDirectory=/root/src/steam-analysis/
 
@@ -262,4 +265,11 @@ Check the status of each service
 ```shell
 systemctl status mongodocker.service
 systemctl status steamanalysis.service
+```
+
+Check the log files of the services via systemd
+
+```shell
+journalctl -u mongodocker.service
+journalctl -u steamanalysis.service
 ```
