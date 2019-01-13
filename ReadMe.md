@@ -91,7 +91,7 @@ http://steamwebapi.azurewebsites.net/
 Backup all Mongo records to an archive.
 
 ```shell
-mongodump --archive=./backups/steam-`date +"%m-%d-%y"`.archive --db steam
+mongodump -h 192.168.1.224:27017 --archive=./backups/steam-`date +"%m-%d-%y"`.archive --db steam
 ```
 
 [Backup all Mongo records to an archive via a Docker container](https://blog.studiointeract.com/mongodump-and-mongorestore-for-mongodb-in-a-docker-container-8ad0eb747c62) (helpful for Mongo 4.X vs. 3.X since mongodump has issues across major version changes).  
@@ -131,9 +131,24 @@ docker pull mongo
 ```
 
 Start Mongo via Docker and bind the port to be accessible via networking
+in addition to setting up a replicaset.
 
 ```shell
-docker run -p 27017:27017 --name mongo -d mongo:latest
+docker run -p 27017:27017 --name mongo -d mongo:latest --replSet "rs0" --bind_ip 127.0.0.1,192.168.1.224
+```
+
+Connect to Mongo (the Master) and add the Master and Slave nodes to the configuration
+
+```
+rs.initiate()
+rs.add( { host: "192.168.1.224:27017", priority: 1, votes: 1 } )
+rs.add( { host: "192.168.1.124:27017", priority: 0, votes: 0 } )
+```
+
+Check the status
+
+```
+rs.status()
 ```
 
 ### Raspberry Pi
