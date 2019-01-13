@@ -194,3 +194,65 @@ Check bandwidth usage
 ```shell
 ip -stats -color -human addr
 ```
+
+### Systemd
+
+Using systemd to automatically start Mongo in Docker as well as the Python scheduler
+on the Raspberry Pi 3.
+These will automatically restart if they're killed off or fail.  They will also
+launch on startup.
+
+Create a service for Mongo by creating a new file (contents below)
+
+```shell
+$ cat /etc/systemd/system/mongodocker.service 
+[Unit]
+Description=Mongo via Docker
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=forking
+Restart=always
+RestartSec=1
+User=root
+ExecStart=docker start mongo
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Create a service for the Python scheduler by creating a new file (contents below)
+
+```shell
+$ cat /etc/systemd/system/steamanalysis.service 
+[Unit]
+Description=Steam analysis
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=python3 -u /root/src/steam-analysis/run-schedule.py &
+WorkingDirectory=/root/src/steam-analysis/
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable the services, this will create the appropriate symlinks
+
+```shell
+systemctl enable mongodocker
+systemctl enable steamanalysis
+```
+
+Check the status of each service
+
+```shell
+systemctl status mongodocker.service
+systemctl status steamanalysis.service
+```
