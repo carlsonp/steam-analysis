@@ -91,7 +91,7 @@ http://steamwebapi.azurewebsites.net/
 Backup all Mongo records to an archive.
 
 ```shell
-mongodump -h 192.168.1.224:27017 --archive=./backups/steam-`date +"%m-%d-%y"`.archive --db steam
+mongodump -h 127.0.0.1:27017 --archive=./backups/steam-`date +"%m-%d-%y"`.archive --db steam
 ```
 
 [Backup all Mongo records to an archive via a Docker container](https://blog.studiointeract.com/mongodump-and-mongorestore-for-mongodb-in-a-docker-container-8ad0eb747c62) (helpful for Mongo 4.X vs. 3.X since mongodump has issues across major version changes).  
