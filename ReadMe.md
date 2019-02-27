@@ -80,6 +80,8 @@ https://mapr.com/blog/deep-learning-tensorflow/
 
 https://www.analyticsvidhya.com/blog/2018/02/time-series-forecasting-methods/
 
+https://www.oreilly.com/ideas/3-reasons-to-add-deep-learning-to-your-time-series-toolkit
+
 #### Steam API
 
 https://github.com/BrakeValve/dataflow/issues/5
