@@ -102,6 +102,9 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 							price_hist['appid'] = int(value['data']['appid'])
 							# add current datetimestamp
 							price_hist['date'] = datetime.datetime.utcnow()
+							# remove formatted values, not needed
+							price_hist.pop('initial_formatted', None)
+							price_hist.pop('final_formatted', None)
 							collection_hist.insert_one(price_hist)
 					else:
 						# increment the failure record count so we can start pruning off bad data
