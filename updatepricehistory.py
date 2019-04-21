@@ -66,7 +66,8 @@ def updatePriceHistory(pbar=False):
 									# add current datetimestamp
 									price_hist['date'] = datetime.datetime.utcnow()
 									# remove formatted values, not needed
-									price_hist.drop(['initial_formatted', 'final_formatted'], axis=1, in_place=True)
+									price_hist.pop('initial_formatted', None)
+									price_hist.pop('final_formatted', None)
 									collection_hist.insert_one(price_hist)
 								else:
 									# No price_overview information returned, remove it from the entry
