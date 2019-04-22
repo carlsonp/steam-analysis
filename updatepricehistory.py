@@ -67,11 +67,12 @@ def updatePriceHistory(pbar=False):
 									price_hist['date'] = datetime.datetime.utcnow()
 									# remove formatted values, not needed
 									# if they ever get added to the database, this will remove them
-									# db.getCollection('pricehistory').update({},{"$unset": {"initial_formatted":1, "final_formatted":1}}, {multi: true})
+									# db.getCollection('pricehistory').update({},{"$unset": {"initial_formatted":1, "final_formatted":1, "currency":1}}, {multi: true})
 									# and to validate that it worked, this should return nothing:
-									# db.getCollection('pricehistory').find({"$or": [{"initial_formatted":{"$exists":true}}, {"final_formatted":{"$exists":true}} ]})
+									# db.getCollection('pricehistory').find({"$or": [{"initial_formatted":{"$exists":true}}, {"final_formatted":{"$exists":true}}, {"currency":{"$exists":true}} ]})
 									price_hist.pop('initial_formatted', None)
 									price_hist.pop('final_formatted', None)
+									price_hist.pop('currency', None)
 									collection_hist.insert_one(price_hist)
 								else:
 									# No price_overview information returned, remove it from the entry
