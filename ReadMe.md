@@ -138,7 +138,7 @@ Start Mongo via Docker and bind the port to be accessible via networking
 in addition to setting up a replicaset.
 
 ```shell
-docker run -p 27017:27017 --name mongo -d mongo:latest --replSet "rs0" --bind_ip 127.0.0.1,192.168.1.224
+docker run -p 27017:27017 --name mongo -d mongo:latest --replSet "rs0" --bind_ip 0.0.0.0
 ```
 
 Connect to Mongo (the Master) and add the Master and Slave nodes to the configuration
@@ -199,6 +199,13 @@ Check bandwidth usage
 ip -stats -color -human addr
 ```
 
+Check docker status
+
+```shell
+docker ps -a
+docker stats
+```
+
 ### Systemd
 
 Using systemd to automatically start Mongo in Docker as well as the Python scheduler
@@ -219,6 +226,7 @@ Wants=network-online.target docker.socket
 
 [Service]
 Restart=always
+RestartSec=2
 User=root
 ExecStart=docker start -a mongo
 ExecStop=docker stop mongo
