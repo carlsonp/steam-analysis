@@ -3,13 +3,13 @@ from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 
-def updatePriceHistory(pbar=False):
+def updatePriceHistory(refresh_type="FULL", pbar=False):
 	try:
 		logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
 							filename='steam-analysis.log', level=logging.DEBUG)
 		# set the logging level for the requests library
 		logging.getLogger('urllib3').setLevel(logging.WARNING)
-		logging.info("Updating Price History")
+		logging.info("Updating Price History via " + refresh_type)
 
 		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
 		client = MongoClient()
@@ -31,14 +31,34 @@ def updatePriceHistory(pbar=False):
 		to_update = collection_apps.distinct("appid", {"updated_date": {"$exists": True},
 								"type": {"$in": ["game", "dlc"]},
 								"is_free": False,
-								"price_overview": {"$exists": True}
+								"price_overview": {"$exists": True},
+								"failureCount": {"$exists": False}
 								})
-
+		
+		if (refresh_type == "PARTIAL"):
+			# sort by newest to oldest updated in pricehistory
+			appid_dict = collection_hist.aggregate([
+     			{"$group": {
+           				"_id": "$appid",
+           				"maxDate": { "$max": "$date" }
+         			}
+     			},
+     			{"$sort": {"maxDate": -1}} # newest first
+   			])
+			for item in appid_dict:
+				if len(to_update) == 1200:
+					break
+				else:
+					if item['_id'] in to_update:
+						# remove this fairly "new" appid from our list items to run on and refresh
+						to_update.remove(item['_id'])
+		
 		if (pbar):
 			bar = progressbar.ProgressBar(max_value=len(to_update)).start()
 
-		# shuffle the appids so we hit new ones each time
-		random.shuffle(to_update) #in-place
+		if (refresh_type == "FULL"):
+			# shuffle the appids so we hit new ones each time
+			random.shuffle(to_update) #in-place
 
 		appids = []
 		for i,appid in enumerate(to_update):
@@ -101,4 +121,6 @@ def updatePriceHistory(pbar=False):
 		logging.error(str(e))
 
 if __name__== "__main__":
-	updatePriceHistory(pbar=True)
+	# PARTIAL: run on a small subset of entries prioritizing those that haven't been updated in a long time
+	# FULL: run on the entire set (takes around 1.5 hours)
+	updatePriceHistory(refresh_type="FULL", pbar=True)
