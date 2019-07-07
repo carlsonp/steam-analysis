@@ -116,7 +116,7 @@ def updatePriceHistory(refresh_type="FULL", pbar=False):
 
 		if (pbar):
 			bar.finish()
-		logging.info("Finished updating price history.")
+		logging.info("Finished updating price history via " + refresh_type)
 	except Exception as e:
 		logging.error(str(e))
 
