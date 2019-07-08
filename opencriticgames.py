@@ -19,6 +19,7 @@ def updateOpenCritic(refresh_type="RANDOM", pbar=False):
 		# create an index for id, this vastly improves performance
 		collection_oc.create_index("id")
 		collection_oc.create_index("date")
+		collection_oc.create_index("steamId")
 
 		# API page w/examples
         # https://api.opencritic.com/
