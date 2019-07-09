@@ -25,18 +25,13 @@ def updateOpenCritic(refresh_type="RANDOM", pbar=False):
         # https://api.opencritic.com/
 	
 		if (refresh_type == "RANDOM"):
-			# find a sampling of OpenCritic IDs to work on
+			# find a sampling of OpenCritic IDs to work on ordered by date
+			# will run on the oldest entries first
 			names_cur = collection_oc.aggregate([
-				{"$match": {}
-				},
-				{"$group": {
-					"_id": "$id"
-					}
-				},
-				{"$sample": {
-					"size": 200
-					}
-				}
+				{"$match": {}},
+				{"$sort": {"date": 1}}, # oldest first
+				{"$limit": 25},
+				{"$project": {"id": 1, "_id":0}}
 			])
 			# convert cursor to Python list
 			to_update = []
