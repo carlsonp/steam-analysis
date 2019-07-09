@@ -3,6 +3,14 @@ from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 
+
+def entryExists(steamid, collection_oc):
+	found = collection_oc.find({"steamId":str(steamid)}).count()
+	if (found == 1):
+		return True
+	else:
+		return False
+
 def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 	try:
 		logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
@@ -35,7 +43,9 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 					}
 				},
 				{"$group": {
-					"_id": "$name"
+
+					"_id": "$appid",
+					"name": {"$first": "$name"}
 					}
 				},
 				{"$sample": {
@@ -45,42 +55,53 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 			])
 			# convert cursor to Python list
 			to_update = []
-			for item in names_cur:
-				to_update.append(item['_id'])
+			appids = []
+			for k,item in enumerate(names_cur):
+				to_update.append(item['name'])
+				appids.append(item['_id'])
 
 		if (pbar):
 			bar = progressbar.ProgressBar(max_value=len(to_update)).start()
 
+		search_count = 0
 		for i,name in enumerate(to_update):
 			if (pbar):
 				bar.update(i+1)
 
 			try:
-				# OpenCritic Game API e.g.
-				# https://api.opencritic.com/api/game/search?criteria=steel%20division%202R
-				r = requests.get(requests.Request('GET', "https://api.opencritic.com/api/game/search", params={'criteria':name}).prepare().url)
-				if (r.ok):
-					data = r.json()
+				# if we already have a record for that steamId, don't bother doing the search, we already have a link between
+				# the OpenCritic 'id' and the 'appid'
+				if (not entryExists(appids[i], collection_oc)):
+					# OpenCritic Game API e.g.
+					# https://api.opencritic.com/api/game/search?criteria=steel%20division%202R
+					r = requests.get(requests.Request('GET', "https://api.opencritic.com/api/game/search", params={'criteria':name}).prepare().url)
+					if (r.ok):
+						search_count = search_count + 1
+						data = r.json()
 
-					for value in data:
-						oc = value
-						# add current datetimestamp
-						oc['date'] = datetime.datetime.utcnow()
-						# remove "dist" value which shows proximity match via the search entry
-						oc.pop('dist', None)
-						#update_one will keep whatever information already exists
-						collection_oc.update_one({'id': int(oc['id'])}, {'$set': oc}, upsert=True)
-				else:
-					logging.error("status code: " + str(r.status_code))
-					logging.error("opencritic search name: " + name)
+						for value in data:
+							oc = value
+							# add current datetimestamp
+							oc['date'] = datetime.datetime.utcnow()
+							# remove "dist" value which shows proximity match via the search entry
+							oc.pop('dist', None)
+							#update_one will keep whatever information already exists
+							collection_oc.update_one({'id': int(oc['id'])}, {'$set': oc}, upsert=True)
+					else:
+						logging.error("status code: " + str(r.status_code))
+						logging.error("opencritic search name: " + name)
+
+					# sleep for a bit, there's no information on API throttling
+					time.sleep(2) #seconds
+				#else:
+					#logging.info("appid: " + appids[i] + " found already in OpenCritic as an entry")
 			except Exception as e:
 				logging.error(str(e) + " - name: " + str(name))
 
-			# sleep for a bit, there's no information on API throttling
-			time.sleep(2) #seconds
-
 		if (pbar):
 			bar.finish()
+		
+		logging.info("Searched for " + str(search_count) + " games in OpenCritic.")
 		logging.info("Finished updating OpenCritic search via " + refresh_type)
 	except Exception as e:
 		logging.error(str(e))
