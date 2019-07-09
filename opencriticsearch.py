@@ -43,13 +43,12 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 					}
 				},
 				{"$group": {
-
 					"_id": "$appid",
 					"name": {"$first": "$name"}
 					}
 				},
 				{"$sample": {
-					"size": 200
+					"size": 150
 					}
 				}
 			])
