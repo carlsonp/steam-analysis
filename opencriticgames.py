@@ -36,7 +36,7 @@ def updateOpenCritic(refresh_type="RANDOM", pbar=False):
 			# convert cursor to Python list
 			to_update = []
 			for item in names_cur:
-				to_update.append(item['_id'])
+				to_update.append(item['id'])
 
 		if (pbar):
 			bar = progressbar.ProgressBar(max_value=len(to_update)).start()
