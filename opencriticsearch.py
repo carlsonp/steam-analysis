@@ -4,8 +4,15 @@ import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 
 
-def entryExists(steamid, collection_oc):
+def entryExistsSteam(steamid, collection_oc):
 	found = collection_oc.find({"steamId":str(steamid)}).count()
+	if (found == 1):
+		return True
+	else:
+		return False
+
+def entryExistsId(id, collection_oc):
+	found = collection_oc.find({"id":id}).count()
 	if (found == 1):
 		return True
 	else:
@@ -70,7 +77,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 			try:
 				# if we already have a record for that steamId, don't bother doing the search, we already have a link between
 				# the OpenCritic 'id' and the 'appid'
-				if (not entryExists(appids[i], collection_oc)):
+				if (not entryExistsSteam(appids[i], collection_oc)):
 					# OpenCritic Game API e.g.
 					# https://api.opencritic.com/api/game/search?criteria=steel%20division%202R
 					r = requests.get(requests.Request('GET', "https://api.opencritic.com/api/game/search", params={'criteria':name}).prepare().url)
@@ -79,13 +86,16 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 						data = r.json()
 
 						for value in data:
-							oc = value
-							# add current datetimestamp
-							oc['date'] = datetime.datetime.utcnow()
-							# remove "dist" value which shows proximity match via the search entry
-							oc.pop('dist', None)
-							#update_one will keep whatever information already exists
-							collection_oc.update_one({'id': int(oc['id'])}, {'$set': oc}, upsert=True)
+							# we don't have an existing record, insert one
+							if (not entryExistsId(value['id'], collection_oc)):
+								oc = value
+								# add current datetimestamp
+								oc['date'] = datetime.datetime.utcnow()
+								# remove "dist" value which shows proximity match via the search entry
+								oc.pop('dist', None)
+								collection_oc.insert_one(oc)
+							#else:
+								#logging.info("id: " + str(oc['id']) + " already exists in the database")
 					else:
 						logging.error("status code: " + str(r.status_code))
 						logging.error("opencritic search name: " + name)
