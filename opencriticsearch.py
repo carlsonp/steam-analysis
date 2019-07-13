@@ -4,8 +4,8 @@ import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 
 
-def entryExistsSteam(steamid, collection_oc):
-	found = collection_oc.find({"steamId":str(steamid)}).count()
+def entryExistsSteam(steamid, name, collection_oc):
+	found = collection_oc.find({"$or": [{"steamId":str(steamid)}, {"name": str(name)}]}).count()
 	if (found == 1):
 		return True
 	else:
@@ -77,7 +77,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 			try:
 				# if we already have a record for that steamId, don't bother doing the search, we already have a link between
 				# the OpenCritic 'id' and the 'appid'
-				if (not entryExistsSteam(appids[i], collection_oc)):
+				if (not entryExistsSteam(appids[i], to_update[i], collection_oc)):
 					# OpenCritic Game API e.g.
 					# https://api.opencritic.com/api/game/search?criteria=steel%20division%202R
 					r = requests.get(requests.Request('GET', "https://api.opencritic.com/api/game/search", params={'criteria':name}).prepare().url)
