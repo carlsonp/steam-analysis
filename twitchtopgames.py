@@ -45,7 +45,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 
 		game_rank = 1 # for game rank/order returned via Twitch
 		i = 1 # for progress bar
-		while (i <= top_x * num_streams):
+		while (i < top_x * num_streams):
 			try:
 				# Twitch Top Games
 				# https://dev.twitch.tv/docs/api/reference/#get-top-games
@@ -82,9 +82,9 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 								if (appid):
 									v['steamId'] = appid
 								collection_twitchhistorical.insert_one(v)
-								i = i + 1
 								if (pbar):
 									bar.update(i)
+								i = i + 1
 
 						game_rank = game_rank + 1
 						# https://dev.twitch.tv/docs/api/guide/#rate-limits
@@ -95,9 +95,8 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 				# sleep for a bit
 				# https://dev.twitch.tv/docs/api/guide/#rate-limits
 				time.sleep(2) #seconds
-				# in some cases, we don't return the max number of streams for a game, thus we can jump ahead
-				if (pbar):
-					bar.update(int(game_rank * num_streams))
+				# in some cases, there aren't the max number of streams for a game, thus we can jump ahead
+				i = int(game_rank * num_streams)
 			except Exception as e:
 				logging.error(str(e))
 
