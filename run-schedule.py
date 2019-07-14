@@ -1,6 +1,6 @@
 import schedule, time, logging
 
-import steamtopgames, steamusers, updatepricehistory, refreshsteam, downloadappids, opencriticsearch, opencriticgames # *.py files
+import steamtopgames, steamusers, updatepricehistory, refreshsteam, downloadappids, opencriticsearch, opencriticgames, twitchtopgames # *.py files
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
                     filename='steam-analysis.log', level=logging.DEBUG)
@@ -19,6 +19,7 @@ schedule.every(6).hours.do(refreshsteam.refreshSteamAppIDs, "MISSING", False)
 schedule.every(24).hours.do(downloadappids.downloadAllAppIDs)
 schedule.every(1).hours.do(opencriticsearch.updateOpenCritic, "PARTIAL", False)
 schedule.every(1).hours.do(opencriticgames.updateOpenCritic, "RANDOM", False)
+schedule.every(3).hours.do(twitchtopgames.updateTwitchTopGames, "TOP", False)
 
 sec = 0
 while True:
