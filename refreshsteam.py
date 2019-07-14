@@ -20,6 +20,7 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 		# create an index for appid, this vastly improves performance
 		collection.create_index("appid", unique=True)
 		collection.create_index("updated_date")
+		collection.create_index("name")
 
 		# e.g.: CS Source
 		# https://store.steampowered.com/api/appdetails?appids=240&cc=us&l=en
