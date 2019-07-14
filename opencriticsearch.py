@@ -33,7 +33,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 		collection_apps = db['apps']
 
 		# create an index for id, this vastly improves performance
-		collection_oc.create_index("id")
+		collection_oc.create_index("id", unique=True)
 		collection_oc.create_index("date")
 		collection_oc.create_index("steamId")
 
@@ -117,5 +117,4 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 
 if __name__== "__main__":
 	# PARTIAL: run on a small random subset coming from our Steam games listing
-	# MISSING: run on entries where we only have an 'id' and 'name' coming from the search
 	updateOpenCritic(refresh_type="PARTIAL", pbar=True)

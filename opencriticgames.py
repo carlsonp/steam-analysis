@@ -3,7 +3,7 @@ from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 
-def updateOpenCritic(refresh_type="RANDOM", pbar=False):
+def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 	try:
 		logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
 							filename='steam-analysis.log', level=logging.DEBUG)
@@ -17,14 +17,14 @@ def updateOpenCritic(refresh_type="RANDOM", pbar=False):
 		collection_oc = db['opencritic']
 
 		# create an index for id, this vastly improves performance
-		collection_oc.create_index("id")
+		collection_oc.create_index("id", unique=True)
 		collection_oc.create_index("date")
 		collection_oc.create_index("steamId")
 
 		# API page w/examples
         # https://api.opencritic.com/
 	
-		if (refresh_type == "RANDOM"):
+		if (refresh_type == "OLDEST"):
 			# find a sampling of OpenCritic IDs to work on ordered by date
 			# will run on the oldest entries first
 			names_cur = collection_oc.aggregate([
@@ -73,5 +73,5 @@ def updateOpenCritic(refresh_type="RANDOM", pbar=False):
 		logging.error(str(e))
 
 if __name__== "__main__":
-	# RANDOM: run on
-	updateOpenCritic(refresh_type="RANDOM", pbar=True)
+	# OLDEST: run on the oldest entries first
+	updateOpenCritic(refresh_type="OLDEST", pbar=True)
