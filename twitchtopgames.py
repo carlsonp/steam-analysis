@@ -66,6 +66,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 
 					for value in data['data']:
 						# add to our historical listing
+						# https://dev.twitch.tv/docs/api/reference/#get-streams
 						r_g = requests.get("https://api.twitch.tv/helix/streams", headers={'Client-ID':config.twitch_client_id}, params={'first':num_streams, 'game_id':int(value['id'])})
 						if (r_g.ok):
 							if (int(r_g.headers['Ratelimit-Remaining']) < 4):
