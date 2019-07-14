@@ -1,5 +1,9 @@
 # Steam Analysis
 
+### Setup
+
+Copy `config_example.py` to `config.py` and edit.
+
 ### Python Libraries
 
 ```shell
