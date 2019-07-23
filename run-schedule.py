@@ -19,7 +19,7 @@ schedule.every(6).hours.do(refreshsteam.refreshSteamAppIDs, "MISSING", False)
 schedule.every(24).hours.do(downloadappids.downloadAllAppIDs)
 schedule.every(1).hours.do(opencriticsearch.updateOpenCritic, "PARTIAL", False)
 schedule.every(1).hours.do(opencriticgames.updateOpenCritic, "OLDEST", False)
-schedule.every(3).hours.do(twitchtopgames.updateTwitchTopGames, "TOP", False)
+schedule.every(9).hours.do(twitchtopgames.updateTwitchTopGames, "TOP", False)
 
 sec = 0
 while True:
