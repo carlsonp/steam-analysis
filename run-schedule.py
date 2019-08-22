@@ -24,7 +24,7 @@ schedule.every(9).hours.do(twitchtopgames.updateTwitchTopGames, "TOP", False)
 sec = 0
 while True:
     schedule.run_pending()
-    if sec % 1800 == 0: # every roughly 30 minutes save the scheduling information to the log
+    if sec % 3600 == 0: # every roughly 60 minutes save the scheduling information to the log
         for job in schedule.jobs:
             logging.info(str(job))
         sec = 0
