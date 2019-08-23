@@ -6,7 +6,6 @@ logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/
                     filename='steam-analysis.log', level=logging.DEBUG)
 
 # run a few things right off the bat since they run infrequently
-steamtopgames.steamTopGames()
 steamusers.steamUsers()
 downloadappids.downloadAllAppIDs()
 
@@ -24,7 +23,7 @@ schedule.every(9).hours.do(twitchtopgames.updateTwitchTopGames, "TOP", False)
 sec = 0
 while True:
     schedule.run_pending()
-    if sec % 3600 == 0: # every roughly 60 minutes save the scheduling information to the log
+    if sec % 7200 == 0: # every roughly 2 hours save the scheduling information to the log
         for job in schedule.jobs:
             logging.info(str(job))
         sec = 0
