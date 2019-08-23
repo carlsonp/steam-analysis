@@ -3,6 +3,7 @@ from pymongo import MongoClient, UpdateOne
 from pymongo.errors import BulkWriteError
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
+import common # common.py
 
 def downloadAllAppIDs(pbar=False):
 	try:
@@ -46,6 +47,7 @@ def downloadAllAppIDs(pbar=False):
 			if (pbar):
 				bar.finish()
 			logging.info("Finished downloading AppIDs.")
+			logging.info("Downloaded: " + common.sizeof_fmt(len(r.content)))
 		else:
 			logging.error("status code: " + str(r.status_code))
 	except Exception as e:

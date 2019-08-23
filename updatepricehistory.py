@@ -2,6 +2,7 @@ import json, sys, time, requests, datetime, random, logging
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
+import common # common.py
 
 def updatePriceHistory(refresh_type="FULL", pbar=False):
 	try:
@@ -60,6 +61,7 @@ def updatePriceHistory(refresh_type="FULL", pbar=False):
 			# shuffle the appids so we hit new ones each time
 			random.shuffle(to_update) #in-place
 
+		bytes_downloaded = 0
 		appids = []
 		for i,appid in enumerate(to_update):
 			appids.append(appid)
@@ -76,6 +78,7 @@ def updatePriceHistory(refresh_type="FULL", pbar=False):
 					r = requests.get("https://store.steampowered.com/api/appdetails?appids="+appids_str+"&cc=us&l=en&filters=price_overview")
 					if (r.ok):
 						data = r.json()
+						bytes_downloaded = bytes_downloaded + len(r.content)
 
 						for k,value in data.items():
 							if (value["success"] is True):
@@ -117,6 +120,7 @@ def updatePriceHistory(refresh_type="FULL", pbar=False):
 		if (pbar):
 			bar.finish()
 		logging.info("Finished updating price history via " + refresh_type)
+		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
 	except Exception as e:
 		logging.error(str(e))
 

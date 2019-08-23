@@ -2,6 +2,7 @@ import json, sys, time, requests, datetime, random, logging
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
+import common # common.py
 
 def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 	try:
@@ -71,6 +72,7 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 			# take only a small sampling of appids
 			to_update = to_update[:500]
 
+		bytes_downloaded = 0
 		for i,appid in enumerate(to_update):
 			if (pbar):
 				bar.update(i+1)
@@ -78,6 +80,7 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 
 			if (r.ok):
 				data = r.json()
+				bytes_downloaded = bytes_downloaded + len(r.content)
 				for k,value in data.items():
 					# for some reason, querying an appid sometimes yields a different number, e.g. 100 yields 80
 					# it appears that "stale" records/appids can be re-pointed to existing working records
@@ -127,6 +130,7 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 		if (pbar):
 			bar.finish()
 		logging.info("Finished updating AppIDs via " + refresh_type)
+		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
 	except Exception as e:
 		logging.error(str(e))
 

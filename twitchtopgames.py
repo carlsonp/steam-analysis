@@ -2,7 +2,7 @@ import json, sys, time, requests, datetime, random, logging
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
-
+import common # common.py
 
 def getSteamId(name, collection_apps):
 	found = collection_apps.find_one({'name':name})
@@ -43,6 +43,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 		if (pbar):
 			bar = progressbar.ProgressBar(max_value=int(top_x * num_streams)).start()
 
+		bytes_downloaded = 0
 		game_rank = 1 # for game rank/order returned via Twitch
 		i = 1 # for progress bar
 		while (i < top_x * num_streams):
@@ -58,6 +59,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 						logging.info("rate limit: " + r.headers['Ratelimit-Limit'])
 						logging.info("rate limit remaining: " + r.headers['Ratelimit-Remaining'])
 					data = r.json()
+					bytes_downloaded = bytes_downloaded + len(r.content)
 					if (data['pagination']['cursor']):
 						pagination = data['pagination']['cursor']
 					else:
@@ -104,6 +106,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 			bar.finish()
 		
 		logging.info("Finished updating Twitch top games via " + refresh_type)
+		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
 	except Exception as e:
 		logging.error(str(e))
 

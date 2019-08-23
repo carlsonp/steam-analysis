@@ -3,6 +3,7 @@ from pymongo import MongoClient, UpdateOne
 from bs4 import BeautifulSoup
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
+import common # common.py
 
 def steamUsers(pbar=False):
     try:
@@ -41,6 +42,7 @@ def steamUsers(pbar=False):
             if (pbar):
                 bar.finish()
             logging.info("Finished downloading Steam users online.")
+            logging.info("Downloaded: " + common.sizeof_fmt(len(r.content)))
         else:
             logging.error("status code: " + str(r.status_code))
     except Exception as e:

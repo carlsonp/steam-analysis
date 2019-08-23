@@ -2,7 +2,7 @@ import json, sys, time, requests, datetime, random, logging
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
-
+import common # common.py
 
 def entryExistsSteam(steamid, name, collection_oc):
 	found = collection_oc.find({"$or": [{"steamId":str(steamid)}, {"name": str(name)}]}).count()
@@ -70,6 +70,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 			bar = progressbar.ProgressBar(max_value=len(to_update)).start()
 
 		search_count = 0
+		bytes_downloaded = 0
 		for i,name in enumerate(to_update):
 			if (pbar):
 				bar.update(i+1)
@@ -84,6 +85,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 					if (r.ok):
 						search_count = search_count + 1
 						data = r.json()
+						bytes_downloaded = bytes_downloaded + len(r.content)
 
 						for value in data:
 							# we don't have an existing record, insert one
@@ -112,6 +114,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 		
 		logging.info("Searched for " + str(search_count) + " games in OpenCritic.")
 		logging.info("Finished updating OpenCritic search via " + refresh_type)
+		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
 	except Exception as e:
 		logging.error(str(e))
 

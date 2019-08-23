@@ -2,6 +2,7 @@ import json, sys, time, requests, datetime, random, logging
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
+import common # common.py
 
 def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 	try:
@@ -41,6 +42,7 @@ def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 		if (pbar):
 			bar = progressbar.ProgressBar(max_value=len(to_update)).start()
 
+		bytes_downloaded = 0
 		for i,oc_id in enumerate(to_update):
 			if (pbar):
 				bar.update(i+1)
@@ -51,6 +53,7 @@ def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 				r = requests.get(requests.Request('GET', "https://api.opencritic.com/api/game", params={'id':oc_id}).prepare().url)
 				if (r.ok):
 					data = r.json()
+					bytes_downloaded = bytes_downloaded + len(r.content)
 
 					oc = data
 					# add current datetimestamp
@@ -69,6 +72,7 @@ def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 		if (pbar):
 			bar.finish()
 		logging.info("Finished updating OpenCritic games via " + refresh_type)
+		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
 	except Exception as e:
 		logging.error(str(e))
 
