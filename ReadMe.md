@@ -10,6 +10,13 @@ Copy `config_example.py` to `config.py` and edit.
 pip3 install pymongo progressbar2 requests schedule beautifulsoup4
 ```
 
+### Bandwidth Monitoring
+
+```
+sudo apt-get install vnstat
+vnstat
+```
+
 ### Mongo Queries
 
 Find all sales
