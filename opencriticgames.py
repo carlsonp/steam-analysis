@@ -52,7 +52,7 @@ def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 				# https://api.opencritic.com/api/game?id=7592
 				r = requests.get(requests.Request('GET', "https://api.opencritic.com/api/game", params={'id':oc_id}).prepare().url)
 				if (r.ok):
-					data = r.json()
+					data = r.json()[0] # the entire result is wrapped in an array for some reason...
 					bytes_downloaded = bytes_downloaded + len(r.content)
 
 					oc = data
