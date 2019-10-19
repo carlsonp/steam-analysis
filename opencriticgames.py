@@ -60,6 +60,24 @@ def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 				else:
 					logging.error("status code: " + str(r.status_code))
 					logging.error("opencritic game id: " + str(oc_id))
+
+				# sleep for a bit, there's no information on API throttling
+				time.sleep(2) #seconds
+
+				# grab review information which is a separate URL
+				# e.g. https://opencritic.com/api/review/game/7592
+
+				r = requests.get(requests.Request('GET', "https://opencritic.com/api/review/game/" + str(oc_id)).prepare().url)
+				if (r.ok):
+					data = r.json()
+					bytes_downloaded = bytes_downloaded + len(r.content)
+
+					oc['Reviews'] = data
+					#update_one will keep whatever information already exists
+					collection_oc.update_one({'id': int(oc['id'])}, {'$set': oc}, upsert=True)
+				else:
+					logging.error("status code: " + str(r.status_code))
+					logging.error("opencritic game id: " + str(oc_id))
 			except Exception as e:
 				logging.error(str(e) + " - id: " + str(oc_id))
 
