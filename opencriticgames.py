@@ -21,9 +21,6 @@ def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 		collection_oc.create_index("id", unique=True)
 		collection_oc.create_index("date")
 		collection_oc.create_index("steamId")
-
-		# API page w/examples
-        # https://api.opencritic.com/
 	
 		if (refresh_type == "OLDEST"):
 			# find a sampling of OpenCritic IDs to work on ordered by date
@@ -49,10 +46,10 @@ def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 
 			try:
 				# OpenCritic Game API e.g.
-				# https://api.opencritic.com/api/game?id=7592
-				r = requests.get(requests.Request('GET', "https://api.opencritic.com/api/game", params={'id':oc_id}).prepare().url)
+				# https://opencritic.com/api/game/7592
+				r = requests.get(requests.Request('GET', "https://opencritic.com/api/game/" + str(oc_id)).prepare().url)
 				if (r.ok):
-					data = r.json()[0] # the entire result is wrapped in an array for some reason...
+					data = r.json()
 					bytes_downloaded = bytes_downloaded + len(r.content)
 
 					oc = data
