@@ -296,3 +296,9 @@ Check the log files of the services via systemd
 journalctl -u mongodocker.service
 journalctl -u steamanalysis.service
 ```
+
+Search the log file for errors
+
+```shell
+grep ERROR steam-analysis.log
+```
