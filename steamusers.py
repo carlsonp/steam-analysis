@@ -1,4 +1,6 @@
-import json, sys, time, re, string, requests, datetime, logging
+import json, sys, time, re, string, requests, datetime
+import logging as log
+import logging.handlers as handlers
 from pymongo import MongoClient, UpdateOne
 from bs4 import BeautifulSoup
 import progressbar # https://github.com/WoLpH/python-progressbar
@@ -7,10 +9,8 @@ import common # common.py
 
 def steamUsers(pbar=False):
     try:
-        logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
-                        filename='steam-analysis.log', level=logging.DEBUG)
-        # set the logging level for the requests library
-        logging.getLogger('urllib3').setLevel(logging.WARNING)
+        logging = common.setupLogging(log, handlers, sys)
+        
         logging.info("Running Steam Users Online")
 
         client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)

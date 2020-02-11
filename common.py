@@ -7,3 +7,19 @@ def sizeof_fmt(num, suffix='B'):
         num /= 1024.0
     return "%.1f %s%s" % (num, 'Yi', suffix)
 
+
+def setupLogging(log, handlers, sys):
+    logging = log.getLogger('steam-analysis')
+    logging.setLevel(log.INFO)
+    # logging is a singleton, make sure we don't duplicate the handlers and spawn additional log messages
+    if not logging.handlers:
+        logHandler = handlers.TimedRotatingFileHandler('steam-analysis.log', when='midnight', interval=1)
+        logHandler.setLevel(log.INFO)
+        logHandler.setFormatter(log.Formatter("%(asctime)s - %(levelname)s - %(message)s", '%m/%d/%Y %I:%M:%S %p'))
+        logging.addHandler(logHandler)
+
+    if 'requests' in sys.modules:
+        # set the logging level for the requests library
+        log.getLogger('urllib3').setLevel(log.WARNING)
+
+    return logging

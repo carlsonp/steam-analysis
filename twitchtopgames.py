@@ -1,4 +1,6 @@
-import json, sys, time, requests, datetime, random, logging
+import json, sys, time, requests, datetime, random
+import logging as log
+import logging.handlers as handlers
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
@@ -13,10 +15,8 @@ def getSteamId(name, collection_apps):
 
 def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 	try:
-		logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
-							filename='steam-analysis.log', level=logging.DEBUG)
-		# set the logging level for the requests library
-		logging.getLogger('urllib3').setLevel(logging.WARNING)
+		logging = common.setupLogging(log, handlers, sys)
+		
 		logging.info("Updating Twitch top games via " + refresh_type)
 
 		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
