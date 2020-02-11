@@ -16,6 +16,7 @@ def setupLogging(log, handlers, sys):
         logHandler = handlers.TimedRotatingFileHandler('steam-analysis.log', when='midnight', interval=1)
         logHandler.setLevel(log.INFO)
         logHandler.setFormatter(log.Formatter("%(asctime)s - %(levelname)s - %(message)s", '%m/%d/%Y %I:%M:%S %p'))
+	logHandler.suffix = "%Y-%m-%d.log"
         logging.addHandler(logHandler)
 
     if 'requests' in sys.modules:
