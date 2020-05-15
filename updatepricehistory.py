@@ -123,6 +123,7 @@ def updatePriceHistory(refresh_type="FULL", pbar=False):
 		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
 	except Exception as e:
 		logging.error(str(e))
+		time.sleep(1)
 
 if __name__== "__main__":
 	# PARTIAL: run on a small subset of entries prioritizing those that haven't been updated in a long time

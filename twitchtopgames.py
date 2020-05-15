@@ -101,6 +101,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 				i = int(game_rank * num_streams)
 			except Exception as e:
 				logging.error(str(e))
+				time.sleep(1)
 
 		if (pbar):
 			bar.finish()
@@ -109,6 +110,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
 	except Exception as e:
 		logging.error(str(e))
+		time.sleep(1)
 
 if __name__== "__main__":
 	# TOP: run on the top X games on Twitch

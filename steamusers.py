@@ -47,6 +47,7 @@ def steamUsers(pbar=False):
             logging.error("status code: " + str(r.status_code))
     except Exception as e:
         logging.error(str(e))
+        time.sleep(1)
 
 
 if __name__== "__main__":

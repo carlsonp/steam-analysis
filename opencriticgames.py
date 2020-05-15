@@ -90,6 +90,7 @@ def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
 	except Exception as e:
 		logging.error(str(e))
+		time.sleep(1)
 
 if __name__== "__main__":
 	# OLDEST: run on the oldest entries first

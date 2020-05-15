@@ -108,6 +108,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 					#logging.info("appid: " + appids[i] + " found already in OpenCritic as an entry")
 			except Exception as e:
 				logging.error(str(e) + " - name: " + str(name))
+				time.sleep(1)
 
 		if (pbar):
 			bar.finish()
@@ -117,6 +118,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
 	except Exception as e:
 		logging.error(str(e))
+		time.sleep(1)
 
 if __name__== "__main__":
 	# PARTIAL: run on a small random subset coming from our Steam games listing
