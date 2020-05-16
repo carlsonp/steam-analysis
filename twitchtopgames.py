@@ -13,6 +13,18 @@ def getSteamId(name, collection_apps):
 	else:
 		return None
 
+def getTwitchToken(logging):
+	# https://dev.twitch.tv/docs/authentication/getting-tokens-oauth#oauth-client-credentials-flow
+	params = {'client_id':config.twitch_client_id, 'client_secret':config.twitch_client_secret, 'grant_type':'client_credentials'}
+	r = requests.post("https://id.twitch.tv/oauth2/token", params=params)
+	if (r.ok):
+		data = r.json()
+		logging.info("Obtained Twitch access token, it expires in: " + str(datetime.timedelta(seconds=data['expires_in'])))
+		return(data['access_token'])
+	else:
+		logging.error("status code: " + str(r.status_code))
+		time.sleep(1)
+
 def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 	try:
 		logging = common.setupLogging(log, handlers, sys)
@@ -40,6 +52,8 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 		# number of streams to return for each game, max 100
 		num_streams = 100
 
+		access_token = getTwitchToken(logging)
+
 		if (pbar):
 			bar = progressbar.ProgressBar(max_value=int(top_x * num_streams)).start()
 
@@ -53,7 +67,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 				params = {'first':first_x}
 				if i != 1:
 					params = {'first':first_x, 'after':pagination}
-				r = requests.get("https://api.twitch.tv/helix/games/top", headers={'Client-ID':config.twitch_client_id}, params=params)
+				r = requests.get("https://api.twitch.tv/helix/games/top", headers={'Client-ID':config.twitch_client_id, 'Authorization':"Bearer "+access_token}, params=params)
 				if (r.ok):
 					if (int(r.headers['Ratelimit-Remaining']) < 4):
 						logging.info("rate limit: " + r.headers['Ratelimit-Limit'])
@@ -69,7 +83,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 					for value in data['data']:
 						# add to our historical listing
 						# https://dev.twitch.tv/docs/api/reference/#get-streams
-						r_g = requests.get("https://api.twitch.tv/helix/streams", headers={'Client-ID':config.twitch_client_id}, params={'first':num_streams, 'game_id':int(value['id'])})
+						r_g = requests.get("https://api.twitch.tv/helix/streams", headers={'Client-ID': config.twitch_client_id, 'Authorization':"Bearer "+access_token}, params={'first':num_streams, 'game_id':int(value['id'])})
 						if (r_g.ok):
 							if (int(r_g.headers['Ratelimit-Remaining']) < 4):
 								logging.info("rate limit: " + r_g.headers['Ratelimit-Limit'])
@@ -87,12 +101,20 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 								if (pbar):
 									bar.update(i)
 								i = i + 1
+						else:
+							logging.error("status code: " + str(r.status_code))
+							# check OAuth and tokens
+							if (r_g.status_code == 401):
+								sys.exit(1)
 
 						game_rank = game_rank + 1
 						# https://dev.twitch.tv/docs/api/guide/#rate-limits
 						time.sleep(2) #seconds
 				else:
 					logging.error("status code: " + str(r.status_code))
+					# check OAuth and tokens
+					if (r.status_code == 401):
+						sys.exit(1)
 
 				# sleep for a bit
 				# https://dev.twitch.tv/docs/api/guide/#rate-limits

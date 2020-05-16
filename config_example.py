@@ -7,3 +7,4 @@ spark_port = 7077
 # Twitch Application Client-ID
 # https://dev.twitch.tv/console/apps
 twitch_client_id = "secret"
+twitch_client_secret = "secret"
