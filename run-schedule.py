@@ -3,7 +3,7 @@ import logging as log
 import logging.handlers as handlers
 import common # common.py
 
-import steamtopgames, steamusers, updatepricehistory, refreshsteam, downloadappids, opencriticsearch, opencriticgames, twitchtopgames # *.py files
+import steamtopgames, steamusers, steamreviews, updatepricehistory, refreshsteam, downloadappids, opencriticsearch, opencriticgames, twitchtopgames # *.py files
 
 logging = common.setupLogging(log, handlers, sys)
 
@@ -15,6 +15,7 @@ downloadappids.downloadAllAppIDs()
 schedule.every(15).minutes.do(steamtopgames.steamTopGames)
 schedule.every(23).hours.do(steamusers.steamUsers)
 schedule.every(1).hours.do(updatepricehistory.updatePriceHistory, "PARTIAL", False)
+schedule.every(1).hours.do(steamreviews.steamReviews)
 schedule.every(3).hours.do(refreshsteam.refreshSteamAppIDs, "SAMPLING", False)
 schedule.every(6).hours.do(refreshsteam.refreshSteamAppIDs, "MISSING", False)
 schedule.every(24).hours.do(downloadappids.downloadAllAppIDs)
