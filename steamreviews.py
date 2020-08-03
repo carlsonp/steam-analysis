@@ -1,4 +1,6 @@
-import json, sys, time, re, string, requests, datetime, logging, random
+import json, sys, time, re, string, requests, datetime
+import logging as log
+import logging.handlers as handlers
 from pymongo import MongoClient, UpdateOne
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
@@ -6,10 +8,8 @@ import common # common.py
 
 def steamReviews(pbar=False):
 	try:
-		logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
-						filename='steam-analysis.log', level=logging.DEBUG)
-		# set the logging level for the requests library
-		logging.getLogger('urllib3').setLevel(logging.WARNING)
+		logging = common.setupLogging(log, handlers, sys)
+
 		logging.info("Running Steam Reviews")
 
 		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
@@ -46,36 +46,42 @@ def steamReviews(pbar=False):
 
 				# convert Epoch seconds to UTC time
 				# https://stackoverflow.com/questions/1697815/how-do-you-convert-a-python-time-struct-time-object-into-a-datetime-object
-				data['start_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(data['start_date']))))
-				data['end_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(data['end_date']))))
+				if ('start_date' in data and data['start_date']):
+					data['start_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(data['start_date']))))
+				if ('end_date' in data and data['end_date']):
+					data['end_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(data['end_date']))))
 
 				if ('recent_events' in data):
 					for k, event in enumerate(data['recent_events']):
-						data['recent_events'][k]['start_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(event['start_date']))))
-						data['recent_events'][k]['end_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(event['end_date']))))
+						if (event['start_date']):
+							data['recent_events'][k]['start_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(event['start_date']))))
+							data['recent_events'][k]['end_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(event['end_date']))))
 
 				if ('rollups' in data):
 					for k, event in enumerate(data['rollups']):
-						data['rollups'][k]['date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(event['date']))))
+						if (event['date']):
+							data['rollups'][k]['date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(event['date']))))
 
 				if ('recent' in data):
 					for k, event in enumerate(data['recent']):
-						data['recent'][k]['date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(event['date']))))
+						if (event['date']):
+							data['recent'][k]['date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(event['date']))))
 
 				#update_one will keep whatever information already exists
 				collection.update_one({'appid': int(appid)}, {'$set': {'reviews': data}}, upsert=True)
-
-				if (pbar):
-					bar.update(i+1)
 			else:
 				logging.error("status code: " + str(r.status_code))
+
+			if (pbar):
+				bar.update(i+1)
 
 			time.sleep(1)
 
 		if (pbar):
 			bar.finish()
-			logging.info("Finished downloading Steam reviews.")
-			logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
+
+		logging.info("Finished downloading Steam reviews.")
+		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
 
 	except Exception as e:
 		logging.error(str(e))
