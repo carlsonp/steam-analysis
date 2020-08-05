@@ -1,23 +1,26 @@
 # Steam Analysis
 
-### Setup
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/carlsonp/steam-analysis.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/carlsonp/steam-analysis/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/carlsonp/steam-analysis.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/carlsonp/steam-analysis/context:python)
+
+## Setup
 
 Copy `config_example.py` to `config.py` and edit.
 
-### Python Libraries
+## Python Libraries
 
 ```shell
 pip3 install pymongo progressbar2 requests schedule beautifulsoup4
 ```
 
-### Bandwidth Monitoring
+## Bandwidth Monitoring
 
 ```
 sudo apt-get install vnstat
 vnstat
 ```
 
-### Mongo Queries
+## Mongo Queries
 
 Find all sales
 
@@ -67,9 +70,9 @@ Find when the apps collection was most recently updated
 db.apps.find({}, {"updated_date":1}).sort({"updated_date":-1})
 ```
 
-### Links
+## Links
 
-#### Additional Datasets and APIs
+### Additional Datasets and APIs
 
 https://towardsdatascience.com/predicting-hit-video-games-with-ml-1341bd9b86b0
 
@@ -81,7 +84,7 @@ https://www.giantbomb.com/api/
 
 https://igdb.github.io/api/
 
-#### Time Series Forecasting
+### Time Series Forecasting
 
 https://facebook.github.io/prophet/
 
@@ -93,13 +96,13 @@ https://www.analyticsvidhya.com/blog/2018/02/time-series-forecasting-methods/
 
 https://www.oreilly.com/ideas/3-reasons-to-add-deep-learning-to-your-time-series-toolkit
 
-#### Steam API
+### Steam API
 
 https://github.com/BrakeValve/dataflow/issues/5
 
 http://steamwebapi.azurewebsites.net/
 
-### Mongo Backup
+## Mongo Backup
 
 Backup all Mongo records to an archive.
 
@@ -113,7 +116,7 @@ mongodump -h 127.0.0.1:27017 --archive=./backups/steam-`date +"%m-%d-%y"`.archiv
 docker run --rm --name=mongobackup --link mongo:mongobackup -v /root/src/steam-analysis/backups/:/backup mongo bash -c 'mongodump --archive=/backup/steam-`date +"%m-%d-%y"`.archive --db steam --host mongo:27017'
 ```
 
-### Mongo Restore
+## Mongo Restore
 
 Restore all Mongo records from an archive.
 
@@ -121,7 +124,7 @@ Restore all Mongo records from an archive.
 mongorestore -h 127.0.0.1:27017 --drop -vvvvvv -d steam --archive=/home/carlsonp/src/steam-analysis/backups/steam-12-16-18.archive
 ```
 
-### Spark
+## Spark
 
 Start master node
 
@@ -135,7 +138,7 @@ Start work node
 ~/spark-2.3.1-bin-hadoop2.7/sbin$ ./start-slave.sh 192.168.1.171:7077
 ```
 
-### Mongo
+## Mongo
 
 Use Mongo 4.X+
 
@@ -166,7 +169,7 @@ Check the status
 rs.status()
 ```
 
-### Raspberry Pi
+## Raspberry Pi
 
 https://wiki.debian.org/RaspberryPi3
 
@@ -178,7 +181,7 @@ Flash image with Etcher:
 
 https://www.balena.io/etcher/
 
-### Running via scheduler
+## Running via scheduler
 
 Run normally
 
@@ -217,7 +220,7 @@ docker ps -a
 docker stats
 ```
 
-### Systemd
+## Systemd
 
 Using systemd to automatically start Mongo in Docker as well as the Python scheduler
 on the Raspberry Pi 3.
