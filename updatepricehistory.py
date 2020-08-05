@@ -1,4 +1,4 @@
-import json, sys, time, requests, datetime, random
+import sys, time, requests, datetime, random
 import logging as log
 import logging.handlers as handlers
 from pymongo import MongoClient
@@ -13,7 +13,6 @@ def updatePriceHistory(refresh_type="FULL", pbar=False):
 		logging.info("Updating Price History via " + refresh_type)
 
 		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
-		client = MongoClient()
 		db = client['steam']
 		collection_hist = db['pricehistory']
 		collection_apps = db['apps']

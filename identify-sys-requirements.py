@@ -1,4 +1,4 @@
-import sys, time, datetime, re, string, logging
+import datetime, re, logging
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config
@@ -58,9 +58,6 @@ try:
                             to_write[os]['recommended_cpu_mhz'] = findCPUMHZ(s.group(2))
                         else:
                             to_write[os][req + '_cpu_mhz'] = findCPUMHZ(html_cleaned)
-
-            #print(to_write)
-            #sys.exit()
 
 
         collection_reqs.replace_one({'appid': app['appid']}, to_write, upsert=True)

@@ -1,7 +1,7 @@
-import json, sys, time, re, string, requests, datetime
+import sys, time, re, requests, datetime
 import logging as log
 import logging.handlers as handlers
-from pymongo import MongoClient, UpdateOne
+from pymongo import MongoClient
 from bs4 import BeautifulSoup
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py

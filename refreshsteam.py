@@ -1,4 +1,4 @@
-import json, sys, time, requests, datetime, random
+import sys, time, requests, datetime, random
 import logging as log
 import logging.handlers as handlers
 from pymongo import MongoClient
@@ -13,7 +13,6 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 		logging.info("Updating AppIDs via " + refresh_type)
 
 		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
-		client = MongoClient()
 		db = client['steam']
 		collection = db['apps']
 		collection_hist = db['pricehistory']

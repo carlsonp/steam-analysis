@@ -1,4 +1,4 @@
-import json, sys, time, requests, datetime
+import sys, time, requests
 import logging as log
 import logging.handlers as handlers
 from pymongo import MongoClient, UpdateOne

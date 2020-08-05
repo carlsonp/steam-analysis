@@ -1,4 +1,3 @@
-import sys
 from pyspark import SparkContext # pip3 install pyspark
 from pyspark.mllib.clustering import LDA, LDAModel
 from pyspark.mllib.linalg import Vectors

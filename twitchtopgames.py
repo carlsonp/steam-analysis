@@ -1,4 +1,4 @@
-import json, sys, time, requests, datetime, random
+import sys, time, requests, datetime
 import logging as log
 import logging.handlers as handlers
 from pymongo import MongoClient
@@ -32,7 +32,6 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 		logging.info("Updating Twitch top games via " + refresh_type)
 
 		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
-		client = MongoClient()
 		db = client['steam']
 		collection_twitchhistorical = db['twitchhistorical']
 		collection_apps = db['apps']

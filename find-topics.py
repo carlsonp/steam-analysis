@@ -1,4 +1,4 @@
-import string, re, sys, random
+import string, re, random
 from pymongo import MongoClient
 from nltk.corpus import stopwords # pip3 install nltk
 from nltk.stem.wordnet import WordNetLemmatizer
