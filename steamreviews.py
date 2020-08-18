@@ -47,25 +47,25 @@ def steamReviews(pbar=False):
 				# convert Epoch seconds to UTC time
 				# https://stackoverflow.com/questions/1697815/how-do-you-convert-a-python-time-struct-time-object-into-a-datetime-object
 				if ('start_date' in data and data['start_date']):
-					data['start_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(data['start_date']))))
+					data['start_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(round(float(data['start_date'])))))
 				if ('end_date' in data and data['end_date']):
-					data['end_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(data['end_date']))))
+					data['end_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(round(float(data['end_date'])))))
 
 				if ('recent_events' in data):
 					for k, event in enumerate(data['recent_events']):
 						if (event['start_date']):
-							data['recent_events'][k]['start_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(event['start_date']))))
-							data['recent_events'][k]['end_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(event['end_date']))))
+							data['recent_events'][k]['start_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(round(float(event['start_date'])))))
+							data['recent_events'][k]['end_date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(round(float(event['end_date'])))))
 
 				if ('rollups' in data):
 					for k, event in enumerate(data['rollups']):
 						if (event['date']):
-							data['rollups'][k]['date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(event['date']))))
+							data['rollups'][k]['date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(round(float(event['date'])))))
 
 				if ('recent' in data):
 					for k, event in enumerate(data['recent']):
 						if (event['date']):
-							data['recent'][k]['date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(int(event['date']))))
+							data['recent'][k]['date'] = datetime.datetime.fromtimestamp(time.mktime(time.gmtime(round(float(event['date'])))))
 
 				#update_one will keep whatever information already exists
 				collection.update_one({'appid': int(appid)}, {'$set': {'reviews': data}}, upsert=True)
