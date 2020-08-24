@@ -1,3 +1,5 @@
+import datetime
+
 # https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size
 def sizeof_fmt(num, suffix='B'):
     # converts bytes to human-friendly string
@@ -24,3 +26,13 @@ def setupLogging(log, handlers, sys):
         log.getLogger('urllib3').setLevel(log.WARNING)
 
     return logging
+
+
+def writeBandwidth(db, bytesamount):
+    collection = db['bandwidth']
+    collection.create_index("date")
+
+    v = {}
+    v['date'] = datetime.datetime.utcnow()
+    v['bytes'] = bytesamount
+    collection.insert_one(v)

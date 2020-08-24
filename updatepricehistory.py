@@ -120,6 +120,7 @@ def updatePriceHistory(refresh_type="FULL", pbar=False):
 			bar.finish()
 		logging.info("Finished updating price history via " + refresh_type)
 		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
+		common.writeBandwidth(db, bytes_downloaded)
 	except Exception as e:
 		logging.error(str(e))
 		time.sleep(1)

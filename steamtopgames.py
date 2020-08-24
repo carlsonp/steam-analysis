@@ -62,6 +62,7 @@ def steamTopGames(pbar=False):
                 bar.finish()
             logging.info("Finished downloading top games.")
             logging.info("Downloaded: " + common.sizeof_fmt(len(r.content)))
+            common.writeBandwidth(db, len(r.content))
         else:
             logging.error("status code: " + str(r.status_code))
     except Exception as e:

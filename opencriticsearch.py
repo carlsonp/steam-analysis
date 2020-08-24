@@ -115,6 +115,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 		logging.info("Searched for " + str(search_count) + " games in OpenCritic.")
 		logging.info("Finished updating OpenCritic search via " + refresh_type)
 		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
+		common.writeBandwidth(db, bytes_downloaded)
 	except Exception as e:
 		logging.error(str(e))
 		time.sleep(1)

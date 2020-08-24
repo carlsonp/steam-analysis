@@ -82,6 +82,7 @@ def steamReviews(pbar=False):
 
 		logging.info("Finished downloading Steam reviews.")
 		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
+		common.writeBandwidth(db, bytes_downloaded)
 
 	except Exception as e:
 		logging.error(str(e))
