@@ -15,7 +15,7 @@ pip3 install pymongo progressbar2 requests schedule beautifulsoup4
 
 ## Bandwidth Monitoring
 
-```
+```shell
 sudo apt-get install vnstat
 vnstat
 ```
@@ -24,19 +24,19 @@ vnstat
 
 Find all sales
 
-```
+```mongo
 db.apps.find({$expr: {$ne: ["$price_overview.initial", "$price_overview.final"] } })
 ```
 
 Find the number of missing entries
 
-```
+```mongo
 db.apps.count({"updated_date": {"$exists": false}})
 ```
 
 Find counts of apps by type
 
-```
+```mongo
 db.apps.aggregate([
     {"$group" : {_id:"$type", count:{$sum:1}}}
 ])
@@ -44,7 +44,7 @@ db.apps.aggregate([
 
 Average Metacritic rating by developer
 
-```
+```mongo
 db.apps.aggregate(
     {
         $group:
@@ -60,13 +60,13 @@ db.apps.aggregate(
 
 Find price history records ordered by the most recent
 
-```
+```mongo
 db.pricehistory.find({}).sort({"date":-1})
 ```
 
 Find when the apps collection was most recently updated
 
-```
+```mongo
 db.apps.find({}, {"updated_date":1}).sort({"updated_date":-1})
 ```
 
@@ -126,17 +126,54 @@ mongorestore -h 127.0.0.1:27017 --drop -vvvvvv -d steam --archive=/home/carlsonp
 
 ## Spark
 
+Install pyspark
+
+```shell
+conda install pyspark
+```
+
+Make sure to run a worker on the master node as well.
+
+### Setup Master
+
+Setup a `SPARK_HOME` environment variable that points to the Spark home folder.
+
+Go into `spark/conf/` and copy `spark-env.sh.template` to `spark-env.sh`.
+Edit the file and set the `SPARK_MASTER_HOST`
+
+```file
+SPARK_MASTER_HOST='192.168.1.145'
+```
+
 Start master node
 
 ```shell
-~/spark-2.3.1-bin-hadoop2.7/sbin$ ./start-master.sh --host 192.168.1.171
+~/spark-2.3.1-bin-hadoop2.7/sbin$ ./start-master.sh --host 192.168.1.145
 ```
 
-Start work node
+Or on Windows:
 
 ```shell
-~/spark-2.3.1-bin-hadoop2.7/sbin$ ./start-slave.sh 192.168.1.171:7077
+~/spark/bin$ spark-class org.apache.spark.deploy.master.Master
 ```
+
+### Setup Worker
+
+Start worker node
+
+```shell
+~/spark-2.3.1-bin-hadoop2.7/sbin$ ./start-slave.sh 192.168.1.145:7077
+```
+
+Or on Windows:
+
+```shell
+~/spark/bin$ spark-class org.apache.spark.deploy.worker.Worker spark://192.168.1.145:7077
+```
+
+### Spark Web UI
+
+[http://192.168.1.145:8080/](http://192.168.1.145:8080/)
 
 ## Mongo
 
@@ -157,7 +194,7 @@ docker run -p 27017:27017 --name mongo -d mongo:latest --replSet "rs0" --bind_ip
 
 Connect to Mongo (the Master) and add the Master and Slave nodes to the configuration
 
-```
+```mongo
 rs.initiate()
 rs.add( { host: "192.168.1.224:27017", priority: 1, votes: 1 } )
 rs.add( { host: "192.168.1.124:27017", priority: 0, votes: 0 } )
@@ -165,7 +202,7 @@ rs.add( { host: "192.168.1.124:27017", priority: 0, votes: 0 } )
 
 Check the status
 
-```
+```mongo
 rs.status()
 ```
 
