@@ -1,6 +1,4 @@
-import sys, time, requests, datetime
-import logging as log
-import logging.handlers as handlers
+import time, requests, datetime
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
@@ -21,9 +19,8 @@ def entryExistsId(id, collection_oc):
 		return False
 
 def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
+	logging = common.setupLogging()
 	try:
-		logging = common.setupLogging(log, handlers, sys)
-
 		logging.info("Updating OpenCritic search via " + refresh_type)
 
 		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)

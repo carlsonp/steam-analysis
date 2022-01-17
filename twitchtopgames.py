@@ -1,6 +1,4 @@
 import sys, time, requests, datetime
-import logging as log
-import logging.handlers as handlers
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
@@ -26,9 +24,8 @@ def getTwitchToken(logging):
 		time.sleep(1)
 
 def updateTwitchTopGames(refresh_type="TOP", pbar=False):
+	logging = common.setupLogging()
 	try:
-		logging = common.setupLogging(log, handlers, sys)
-		
 		logging.info("Updating Twitch top games via " + refresh_type)
 
 		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)

@@ -1,6 +1,4 @@
-import sys, time, requests
-import logging as log
-import logging.handlers as handlers
+import time, requests
 from pymongo import MongoClient, UpdateOne
 from pymongo.errors import BulkWriteError
 import progressbar # https://github.com/WoLpH/python-progressbar
@@ -8,9 +6,8 @@ import config # config.py
 import common # common.py
 
 def downloadAllAppIDs(pbar=False):
+	logging = common.setupLogging()
 	try:
-		logging = common.setupLogging(log, handlers, sys)
-
 		logging.info("Downloading All AppIDs")
 
 		# downloads a list of every appid and name from the API

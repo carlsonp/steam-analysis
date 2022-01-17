@@ -1,0 +1,4 @@
+SHELL=/bin/bash
+# make sure there's an empty line at the end of the file
+# At 00:00 every Sunday
+0 0 * * 0 mongodump --host=mongo:27017 --archive=/backups/steam-`date +"%m-%d-%y"`.archive --db steam > /proc/1/fd/1 2>/proc/1/fd/2

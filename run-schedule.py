@@ -1,11 +1,11 @@
-import schedule, time, sys
-import logging as log
-import logging.handlers as handlers
+import schedule, time
 import common # common.py
 
 import steamtopgames, steamusers, steamreviews, updatepricehistory, refreshsteam, downloadappids, opencriticsearch, opencriticgames, twitchtopgames # *.py files
 
-logging = common.setupLogging(log, handlers, sys)
+logging = common.setupLogging()
+
+logging.info("Starting steam-analysis")
 
 # run a few things right off the bat since they run infrequently
 steamusers.steamUsers()

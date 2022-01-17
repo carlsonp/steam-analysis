@@ -7,6 +7,25 @@
 
 Copy `config_example.py` to `config.py` and edit.
 
+## Docker
+
+```shell
+docker compose build --pull
+docker compose up -d --build
+```
+
+## Docker Debugging
+
+```shell
+docker exec -it <id> bash
+```
+
+## Docker Teardown
+
+```shell
+docker compose down -v
+```
+
 ## Python Libraries
 
 ```shell
@@ -16,7 +35,7 @@ pip3 install pymongo progressbar2 requests schedule beautifulsoup4
 ## Bandwidth Monitoring
 
 ```shell
-sudo apt-get install vnstat
+sudo apt install vnstat
 vnstat
 ```
 

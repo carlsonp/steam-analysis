@@ -1,0 +1,45 @@
+version: '3.4'
+services:
+
+  steam:
+    build:
+      dockerfile: Dockerfile_steam.txt
+    restart: unless-stopped
+    container_name: steam
+    hostname: steam
+    volumes:
+      - ./logs:/logs:rw
+    environment:
+      TZ: "America/Denver"
+    depends_on:
+      - mongo
+
+  mongo:
+    build:
+      dockerfile: Dockerfile_mongo.txt
+    restart: unless-stopped
+    container_name: mongo
+    hostname: mongo
+    environment:
+      TZ: "America/Denver"
+      MONGO_INITDB_DATABASE: "steam"
+    ports:
+      - 27017:27017/tcp
+    volumes:
+      - mongodata:/data/db:rw
+
+  mongobackup:
+    build:
+      dockerfile: Dockerfile_mongobackup.txt
+    restart: unless-stopped
+    container_name: mongobackup
+    hostname: mongobackup
+    volumes:
+      - ./backups:/backups:rw
+    environment:
+      TZ: "America/Denver"
+    depends_on:
+      - mongo
+
+volumes:
+  mongodata:

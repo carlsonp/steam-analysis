@@ -1,0 +1,38 @@
+FROM ubuntu:20.04
+
+# for the local apt-cacher-ng proxy
+RUN echo 'Acquire::HTTP::Proxy "http://192.168.1.226:3142";' >> /etc/apt/apt.conf.d/01proxy && \
+    echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy
+
+RUN apt update && \
+    apt install -y --no-install-recommends tzdata cron gnupg ca-certificates wget dos2unix && \
+    apt upgrade -y && \
+    apt autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
+
+# add repo for Mongo
+RUN wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add -
+RUN echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-5.0.list
+
+# install Mongo Tools
+RUN apt update && \
+    apt install -y mongodb-org-tools && \
+    rm -rf /var/lib/apt/lists/*
+
+# create the executable script
+RUN echo "#!/bin/bash \n mongodump --host=mongo:27017 --archive=/backups/steam-`date +"%m-%d-%y"`.archive --db steam" >> /runbackup.sh && \
+    chmod +x /runbackup.sh
+
+# setup our mongo backup script to run via cron on a schedule
+COPY mongobackup-crontab /etc/cron.d/mongobackup-crontab
+
+RUN dos2unix /etc/cron.d/mongobackup-crontab
+
+# https://stackoverflow.com/questions/37458287/how-to-run-a-cron-job-inside-a-docker-container
+
+RUN chmod 0644 /etc/cron.d/mongobackup-crontab && \
+    crontab /etc/cron.d/mongobackup-crontab
+
+# for debugging
+#CMD ["tail", "-f", "/dev/null"]
+CMD ["cron", "-f"]

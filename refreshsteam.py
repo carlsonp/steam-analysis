@@ -1,15 +1,12 @@
-import sys, time, requests, datetime, random
-import logging as log
-import logging.handlers as handlers
+import time, requests, datetime, random
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 import common # common.py
 
 def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
+	logging = common.setupLogging()
 	try:
-		logging = common.setupLogging(log, handlers, sys)
-		
 		logging.info("Updating AppIDs via " + refresh_type)
 
 		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)

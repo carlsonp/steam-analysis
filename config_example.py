@@ -1,4 +1,4 @@
-mongodb_ip = "127.0.0.1"
+mongodb_ip = "mongo"
 mongodb_port = 27017
 
 spark_ip = "192.168.1.145"

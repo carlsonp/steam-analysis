@@ -1,15 +1,12 @@
-import sys, time, requests, datetime
-import logging as log
-import logging.handlers as handlers
+import time, requests, datetime
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
 import config # config.py
 import common # common.py
 
 def steamUsers(pbar=False):
+    logging = common.setupLogging()
     try:
-        logging = common.setupLogging(log, handlers, sys)
-        
         logging.info("Running Steam Users Online")
 
         client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
