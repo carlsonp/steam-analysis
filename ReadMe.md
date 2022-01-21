@@ -7,6 +7,12 @@
 
 Copy `config_example.py` to `config.py` and edit.
 
+Note that Mongo 5.X requires a CPU with AVX support, therefore, we're running 4.X.
+
+```shell
+grep avx /proc/cpuinfo
+```
+
 ## Docker
 
 ```shell
