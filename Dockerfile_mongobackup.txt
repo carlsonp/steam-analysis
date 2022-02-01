@@ -20,8 +20,8 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/*
 
 # create the executable script
-RUN echo "#!/bin/bash \n mongodump --host=mongo:27017 --archive=/backups/steam-`date +"%m-%d-%y"`.archive --db steam" >> /runbackup.sh && \
-    chmod +x /runbackup.sh
+COPY ./runbackup.sh /runbackup.sh
+RUN chmod +x /runbackup.sh
 
 # setup our mongo backup script to run via cron on a schedule
 COPY mongobackup-crontab /etc/cron.d/mongobackup-crontab
