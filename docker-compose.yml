@@ -10,7 +10,7 @@ services:
     volumes:
       - ./logs:/logs:rw
     environment:
-      TZ: "America/Denver"
+      TZ: "America/Chicago"
     depends_on:
       - mongo
 
@@ -21,7 +21,7 @@ services:
     container_name: mongo
     hostname: mongo
     environment:
-      TZ: "America/Denver"
+      TZ: "America/Chicago"
       MONGO_INITDB_DATABASE: "steam"
     ports:
       - 27017:27017/tcp
@@ -37,7 +37,7 @@ services:
     volumes:
       - ./backups:/backups:rw
     environment:
-      TZ: "America/Denver"
+      TZ: "America/Chicago"
     depends_on:
       - mongo
 
