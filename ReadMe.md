@@ -196,8 +196,6 @@ Or on Windows:
 
 ## Mongo
 
-Use Mongo 4.X+
-
 Grab Mongo from Docker
 
 ```shell
