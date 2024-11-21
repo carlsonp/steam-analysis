@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/reference.md#run---mounttypecache
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
@@ -7,10 +7,10 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloa
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt update && \
-    apt install -y --no-install-recommends tzdata cron gnupg ca-certificates wget dos2unix && \
-    wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2204-x86_64-100.9.4.deb && \
-    dpkg --install mongodb-database-tools-ubuntu2204-x86_64-100.9.4.deb && \
-    rm -rf mongodb-database-tools-ubuntu2204-x86_64-100.9.4.deb && \
+    apt install -y --no-install-recommends tzdata cron gnupg ca-certificates wget dos2unix libgssapi-krb5-2 libkrb5-3 libk5crypto3 libkrb5support0 libkeyutils1 && \
+    wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2404-x86_64-100.10.0.deb && \
+    dpkg --install mongodb-database-tools-ubuntu2404-x86_64-100.10.0.deb && \
+    rm -rf mongodb-database-tools-ubuntu2404-x86_64-100.10.0.deb && \
     apt upgrade -y && \
     apt autoremove -y    
 
