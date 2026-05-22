@@ -34,8 +34,16 @@ docker compose down -v
 
 ## Helm
 
+Lint the YAML
+
 ```shell
 helm lint chart
+```
+
+Generate the output, helpful for debugging
+
+```shell
+helm template chart
 ```
 
 ## Python Libraries

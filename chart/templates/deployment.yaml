@@ -40,6 +40,24 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          env:
+            - name: TWITCH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: steam-analysis-twitch-secret
+                  key: TWITCH_CLIENT_ID
+            - name: TWITCH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: steam-analysis-twitch-secret
+                  key: TWITCH_CLIENT_SECRET
+            - name: STEAM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: steam-analysis-steamapi-secret
+                  key: STEAM_API_KEY
+
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
