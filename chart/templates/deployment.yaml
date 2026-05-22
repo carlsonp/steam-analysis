@@ -65,7 +65,7 @@ spec:
             - name: MONGODB_IP
               value: steam-analysis-mongodb.steam-analysis.svc.cluster.local
             - name: MONGODB_PORT
-              value: 27017
+              value: "27017"
 
           {{- with .Values.resources }}
           resources:
