@@ -4,7 +4,8 @@ metadata:
   name: steam-analysis-mongodb
 spec:
   ports:
-    - port: 27017
+    - name: mongo
+      port: 27017
       targetPort: 27017
   selector:
     app: mongodb
