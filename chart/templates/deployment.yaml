@@ -57,6 +57,15 @@ spec:
                 secretKeyRef:
                   name: steam-analysis-steamapi-secret
                   key: STEAM_API_KEY
+            - name: MONGODB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: steam-analysis-mongo-secret
+                  key: MONGO_INITDB_ROOT_PASSWORD
+            - name: MONGODB_IP
+              value: steam-analysis-mongodb.steam-analysis.svc.cluster.local
+            - name: MONGODB_PORT
+              value: 27017
 
           {{- with .Values.resources }}
           resources:
