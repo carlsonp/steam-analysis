@@ -2,7 +2,8 @@ services:
 
   steam:
     build:
-      dockerfile: Dockerfile_steam.txt
+      dockerfile: Dockerfile
+    image: ghcr.io/carlsonp/steam-analysis:latest
     restart: unless-stopped
     container_name: steam
     hostname: steam
@@ -10,12 +11,14 @@ services:
       - ./logs:/logs:rw
     environment:
       TZ: "America/Chicago"
+      MONGODB_IP: ${MONGODB_IP}
+      MONGODB_PORT: ${MONGODB_PORT}
+      TWITCH_CLILENT_ID: ${TWITCH_CLILENT_ID}
     depends_on:
       - mongo
 
   mongo:
-    build:
-      dockerfile: Dockerfile_mongo.txt
+    image: mongo:7.0.34
     restart: unless-stopped
     container_name: mongo
     hostname: mongo
@@ -26,19 +29,6 @@ services:
       - 27017:27017/tcp
     volumes:
       - mongodata:/data/db:rw
-
-  mongobackup:
-    build:
-      dockerfile: Dockerfile_mongobackup.txt
-    restart: unless-stopped
-    container_name: mongobackup
-    hostname: mongobackup
-    volumes:
-      - ./backups:/backups:rw
-    environment:
-      TZ: "America/Chicago"
-    depends_on:
-      - mongo
 
 volumes:
   mongodata:
