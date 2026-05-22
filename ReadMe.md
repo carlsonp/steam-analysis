@@ -129,7 +129,7 @@ Backup all Mongo records to an archive.
 mongodump -h 127.0.0.1:27017 --archive=./backups/steam-`date +"%m-%d-%y"`.archive --db steam
 ```
 
-[Backup all Mongo records to an archive via a Docker container](https://blog.studiointeract.com/mongodump-and-mongorestore-for-mongodb-in-a-docker-container-8ad0eb747c62) (helpful for Mongo 4.X vs. 3.X since mongodump has issues across major version changes).  
+[Backup all Mongo records to an archive via a Docker container](https://blog.studiointeract.com/mongodump-and-mongorestore-for-mongodb-in-a-docker-container-8ad0eb747c62) (helpful for Mongo 4.X vs. 3.X since mongodump has issues across major version changes).
 
 ```shell
 docker run --rm --name=mongobackup --link mongo:mongobackup -v /root/src/steam-analysis/backups/:/backup mongo bash -c 'mongodump --archive=/backup/steam-`date +"%m-%d-%y"`.archive --db steam --host mongo:27017'
@@ -284,7 +284,7 @@ launch on startup.
 Create a service for Mongo by creating a new file (contents below).
 
 ```shell
-$ cat /etc/systemd/system/mongodocker.service 
+$ cat /etc/systemd/system/mongodocker.service
 [Unit]
 Description=Mongo via Docker
 After=network.target
@@ -307,7 +307,7 @@ Create a service for the Python scheduler by creating a new file (contents below
 The pre sleep ensures Mongo is up and running before we start.
 
 ```shell
-$ cat /etc/systemd/system/steamanalysis.service 
+$ cat /etc/systemd/system/steamanalysis.service
 [Unit]
 Description=Steam analysis
 After=network.target

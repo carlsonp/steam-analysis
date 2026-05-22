@@ -78,7 +78,7 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 				try:
 					data = r.json()
 					bytes_downloaded = bytes_downloaded + len(r.content)
-				
+
 					for k,value in data.items():
 						# for some reason, querying an appid sometimes yields a different number, e.g. 100 yields 80
 						# it appears that "stale" records/appids can be re-pointed to existing working records

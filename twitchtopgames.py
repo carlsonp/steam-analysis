@@ -123,7 +123,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 
 		if (pbar):
 			bar.finish()
-		
+
 		logging.info("Finished updating Twitch top games via " + refresh_type)
 		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
 		common.writeBandwidth(db, bytes_downloaded)

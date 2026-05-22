@@ -16,7 +16,7 @@ def downloadAllAppIDs(pbar=False):
 		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
 		db = client['steam']
 		collection = db['apps']
-	
+
 		r = requests.get("https://api.steampowered.com/ISteamApps/GetAppList/v0002/")
 
 		if (r.ok):

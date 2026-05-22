@@ -17,7 +17,7 @@ def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 		collection_oc.create_index("id", unique=True)
 		collection_oc.create_index("date")
 		collection_oc.create_index("steamId")
-	
+
 		if (refresh_type == "OLDEST"):
 			# find a sampling of OpenCritic IDs to work on ordered by date
 			# will run on the oldest entries first

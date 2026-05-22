@@ -23,7 +23,7 @@ def updatePriceHistory(refresh_type="FULL", pbar=False):
 
 		# https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI#Known_methods
 		# https://stackoverflow.com/questions/13784059/how-to-get-the-price-of-an-app-in-steam-webapi
-	
+
 		# find prices for all games and dlc
 		to_update = collection_apps.distinct("appid", {"updated_date": {"$exists": True},
 								"type": {"$in": ["game", "dlc"]},
@@ -31,7 +31,7 @@ def updatePriceHistory(refresh_type="FULL", pbar=False):
 								"price_overview": {"$exists": True},
 								"failureCount": {"$exists": False}
 								})
-		
+
 		if (refresh_type == "PARTIAL"):
 			# sort by newest to oldest updated in pricehistory
 			appid_dict = collection_hist.aggregate([
@@ -49,7 +49,7 @@ def updatePriceHistory(refresh_type="FULL", pbar=False):
 					if item['_id'] in to_update:
 						# remove this fairly "new" appid from our list items to run on and refresh
 						to_update.remove(item['_id'])
-		
+
 		if (pbar):
 			bar = progressbar.ProgressBar(max_value=len(to_update)).start()
 

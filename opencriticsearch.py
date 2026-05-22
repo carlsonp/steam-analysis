@@ -35,7 +35,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 
 		# API page w/examples
         # https://api.opencritic.com/
-	
+
 		if (refresh_type == "PARTIAL"):
 			# find appids for all games and dlc
 			# https://stackoverflow.com/questions/54440636/the-field-name-must-be-an-accumulator-object
@@ -108,7 +108,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 
 		if (pbar):
 			bar.finish()
-		
+
 		logging.info("Searched for " + str(search_count) + " games in OpenCritic.")
 		logging.info("Finished updating OpenCritic search via " + refresh_type)
 		logging.info("Downloaded: " + common.sizeof_fmt(bytes_downloaded))
