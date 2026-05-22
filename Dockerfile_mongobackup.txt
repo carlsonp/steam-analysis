@@ -8,9 +8,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt update && \
     apt install -y --no-install-recommends tzdata cron gnupg ca-certificates wget dos2unix libgssapi-krb5-2 libkrb5-3 libk5crypto3 libkrb5support0 libkeyutils1 && \
-    wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2404-x86_64-100.10.0.deb && \
-    dpkg --install mongodb-database-tools-ubuntu2404-x86_64-100.10.0.deb && \
-    rm -rf mongodb-database-tools-ubuntu2404-x86_64-100.10.0.deb && \
+    wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2404-x86_64-100.17.0.deb && \
+    dpkg --install mongodb-database-tools-ubuntu2404-x86_64-100.17.0.deb && \
+    rm -rf mongodb-database-tools-ubuntu2404-x86_64-100.17.0.deb && \
     apt upgrade -y && \
     apt autoremove -y
 
