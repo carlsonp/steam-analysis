@@ -18,8 +18,8 @@ RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked pip3 install pymon
 
 WORKDIR /
 
-COPY *.py /
+COPY src/*.py /
 
 # for debugging
-#CMD ["tail", "-f", "/dev/null"]
+# CMD ["tail", "-f", "/dev/null"]
 CMD ["python3", "-u", "run-schedule.py"]

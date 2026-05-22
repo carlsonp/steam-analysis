@@ -5,7 +5,7 @@
 
 ## Setup
 
-Copy `config_example.py` to `config.py` and edit.
+Copy `.env-copy` to `.env` and edit.
 
 ## Docker
 
@@ -18,6 +18,12 @@ docker compose up -d --build
 
 ```shell
 docker exec -it <id> bash
+```
+
+## Docker Development
+
+```shell
+docker compose -f docker-compose-dev.yml up -d
 ```
 
 ## Docker Teardown

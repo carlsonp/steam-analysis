@@ -9,12 +9,14 @@ services:
     hostname: steam
     volumes:
       - ./logs:/logs:rw
+      - ./src/:/src:rw
     environment:
       TZ: "America/Chicago"
       MONGODB_IP: ${MONGODB_IP}
       MONGODB_PORT: ${MONGODB_PORT}
       MONGODB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD}
-      TWITCH_CLILENT_ID: ${TWITCH_CLILENT_ID}
+      TWITCH_CLIENT_ID: ${TWITCH_CLIENT_ID}
+      TWITCH_CLIENT_SECRET: ${TWITCH_CLIENT_SECRET}
       STEAM_API_KEY: ${STEAM_API_KEY}
     depends_on:
       - mongo

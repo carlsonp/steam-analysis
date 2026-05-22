@@ -1,15 +1,15 @@
-import time, requests, datetime
+import time, requests, datetime, os
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
-import config # config.py
-import common # common.py
+import common as common # common.py
 
 def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 	logging = common.setupLogging()
 	try:
 		logging.info("Updating OpenCritic games via " + refresh_type)
 
-		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
+		uri = f"mongodb://root:{os.environ['MONGODB_ROOT_PASSWORD']}@{os.environ['MONGODB_IP']}:{os.environ['MONGODB_PORT']}/"
+		client = MongoClient(uri)
 		db = client['steam']
 		collection_oc = db['opencritic']
 
@@ -50,7 +50,7 @@ def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 
 					oc = data
 					# add current datetimestamp
-					oc['date'] = datetime.datetime.utcnow()
+					oc['date'] = datetime.datetime.now(datetime.UTC)
 					#update_one will keep whatever information already exists
 					collection_oc.update_one({'id': int(oc['id'])}, {'$set': oc}, upsert=True)
 				else:

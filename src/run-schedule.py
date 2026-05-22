@@ -1,7 +1,7 @@
 import schedule, time
-import common # common.py
+import common as common # common.py
 
-import steamtopgames, steamusers, steamreviews, updatepricehistory, refreshsteam, downloadappids, opencriticsearch, opencriticgames, twitchtopgames # *.py files
+import steamtopgames as steamtopgames, steamusers as steamusers, steamreviews as steamreviews, updatepricehistory as updatepricehistory, refreshsteam as refreshsteam, downloadappids as downloadappids, opencriticsearch as opencriticsearch, opencriticgames as opencriticgames, twitchtopgames as twitchtopgames # *.py files
 
 logging = common.setupLogging()
 
@@ -19,8 +19,9 @@ schedule.every(30).minutes.do(steamreviews.steamReviews)
 schedule.every(3).hours.do(refreshsteam.refreshSteamAppIDs, "SAMPLING", False)
 schedule.every(6).hours.do(refreshsteam.refreshSteamAppIDs, "MISSING", False)
 schedule.every(24).hours.do(downloadappids.downloadAllAppIDs)
-schedule.every(1).hours.do(opencriticsearch.updateOpenCritic, "PARTIAL", False)
-schedule.every(1).hours.do(opencriticgames.updateOpenCritic, "OLDEST", False)
+# open critic is now locked down, does not provide API access
+# schedule.every(1).hours.do(opencriticsearch.updateOpenCritic, "PARTIAL", False)
+# schedule.every(1).hours.do(opencriticgames.updateOpenCritic, "OLDEST", False)
 schedule.every(9).hours.do(twitchtopgames.updateTwitchTopGames, "TOP", False)
 
 sec = 0

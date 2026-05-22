@@ -1,11 +1,10 @@
-import string, re, random
+import string, re, random, os
 from pymongo import MongoClient
 from nltk.corpus import stopwords # pip3 install nltk
 from nltk.stem.wordnet import WordNetLemmatizer
 import gensim # pip3 install gensim
 from gensim import corpora
 import pyLDAvis.gensim # pip3 install pyLDAvis, IPython
-import config # config.py
 # python3
 # >>> import nltk
 # >>> nltk.download('popular')
@@ -17,7 +16,8 @@ import config # config.py
 # https://miningthedetails.com/blog/python/lda/GensimLDA/
 
 
-client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
+uri = f"mongodb://root:{os.environ['MONGODB_ROOT_PASSWORD']}@{os.environ['MONGODB_IP']}:{os.environ['MONGODB_PORT']}/"
+client = MongoClient(uri)
 db = client['steam']
 collection = db['apps']
 

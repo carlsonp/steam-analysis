@@ -1,29 +1,25 @@
-import time, requests, datetime
+import time, requests, datetime, os
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
-import config # config.py
-import common # common.py
+import common as common # common.py
 
 def entryExistsSteam(steamid, name, collection_oc):
-	found = collection_oc.find({"$or": [{"steamId":str(steamid)}, {"name": str(name)}]}).count()
-	if (found == 1):
-		return True
-	else:
-		return False
+    found = collection_oc.count_documents(
+        {"$or": [{"steamId": str(steamid)}, {"name": str(name)}]}
+    )
+    return found > 0
 
 def entryExistsId(id, collection_oc):
-	found = collection_oc.find({"id":id}).count()
-	if (found == 1):
-		return True
-	else:
-		return False
+    found = collection_oc.count_documents({"id": id})
+    return found > 0
 
 def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 	logging = common.setupLogging()
 	try:
 		logging.info("Updating OpenCritic search via " + refresh_type)
 
-		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
+		uri = f"mongodb://root:{os.environ['MONGODB_ROOT_PASSWORD']}@{os.environ['MONGODB_IP']}:{os.environ['MONGODB_PORT']}/"
+		client = MongoClient(uri)
 		db = client['steam']
 		collection_oc = db['opencritic']
 		collection_apps = db['apps']
@@ -81,6 +77,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 					if (r.ok):
 						search_count = search_count + 1
 						data = r.json()
+						print(data)
 						bytes_downloaded = bytes_downloaded + len(r.content)
 
 						for value in data:
@@ -88,7 +85,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 							if (not entryExistsId(value['id'], collection_oc)):
 								oc = value
 								# add current datetimestamp
-								oc['date'] = datetime.datetime.utcnow()
+								oc['date'] = datetime.datetime.now(datetime.UTC)
 								# remove "dist" value which shows proximity match via the search entry
 								oc.pop('dist', None)
 								collection_oc.insert_one(oc)

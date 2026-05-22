@@ -1,15 +1,15 @@
-import time, requests, datetime, random
+import time, requests, datetime, random, os
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
-import config # config.py
-import common # common.py
+import common as common # common.py
 
 def updatePriceHistory(refresh_type="FULL", pbar=False):
 	logging = common.setupLogging()
 	try:
 		logging.info("Updating Price History via " + refresh_type)
 
-		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
+		uri = f"mongodb://root:{os.environ['MONGODB_ROOT_PASSWORD']}@{os.environ['MONGODB_IP']}:{os.environ['MONGODB_PORT']}/"
+		client = MongoClient(uri)
 		db = client['steam']
 		collection_hist = db['pricehistory']
 		collection_apps = db['apps']
@@ -83,7 +83,7 @@ def updatePriceHistory(refresh_type="FULL", pbar=False):
 									# set the appid based on the key
 									price_hist['appid'] = int(k)
 									# add current datetimestamp
-									price_hist['date'] = datetime.datetime.utcnow()
+									price_hist['date'] = datetime.datetime.now(datetime.UTC)
 									# remove formatted values, not needed
 									# if they ever get added to the database, this will remove them
 									# db.getCollection('pricehistory').update({},{"$unset": {"initial_formatted":1, "final_formatted":1, "currency":1}}, {multi: true})

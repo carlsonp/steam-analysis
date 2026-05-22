@@ -1,15 +1,15 @@
-import time, requests, datetime, random
+import time, requests, datetime, random, os
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
-import config # config.py
-import common # common.py
+import common as common # common.py
 
 def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 	logging = common.setupLogging()
 	try:
 		logging.info("Updating AppIDs via " + refresh_type)
 
-		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
+		uri = f"mongodb://root:{os.environ['MONGODB_ROOT_PASSWORD']}@{os.environ['MONGODB_IP']}:{os.environ['MONGODB_PORT']}/"
+		client = MongoClient(uri)
 		db = client['steam']
 		collection = db['apps']
 		collection_hist = db['pricehistory']
@@ -86,7 +86,7 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 							# rename "steam_appid" to "appid" so we insert properly into Mongo
 							value['data']['appid'] = int(value['data'].pop('steam_appid'))
 							# add current datetimestamp
-							value['data']['updated_date'] = datetime.datetime.utcnow()
+							value['data']['updated_date'] = datetime.datetime.now(datetime.UTC)
 							try:
 								if (value['data']['release_date']['date'] != ""):
 									# fix release_date -> date, change from string to ISODate() for Mongo
@@ -103,7 +103,7 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 								# set the appid
 								price_hist['appid'] = int(value['data']['appid'])
 								# add current datetimestamp
-								price_hist['date'] = datetime.datetime.utcnow()
+								price_hist['date'] = datetime.datetime.now(datetime.UTC)
 								# remove formatted values, not needed
 								# if they ever get added to the database, this will remove them
 								# db.getCollection('pricehistory').update({},{"$unset": {"initial_formatted":1, "final_formatted":1, "currency":1}}, {multi: true})

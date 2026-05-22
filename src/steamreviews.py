@@ -1,15 +1,15 @@
-import time, requests, datetime
+import time, requests, datetime, os
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
-import config # config.py
-import common # common.py
+import common as common # common.py
 
 def steamReviews(pbar=False):
 	logging = common.setupLogging()
 	try:
 		logging.info("Running Steam Reviews")
 
-		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
+		uri = f"mongodb://root:{os.environ['MONGODB_ROOT_PASSWORD']}@{os.environ['MONGODB_IP']}:{os.environ['MONGODB_PORT']}/"
+		client = MongoClient(uri)
 
 		db = client['steam']
 		collection = db['apps']
@@ -39,7 +39,7 @@ def steamReviews(pbar=False):
 				data = r.json()['results']
 
 				# add current datetimestamp
-				data['last_updated'] = datetime.datetime.utcnow()
+				data['last_updated'] = datetime.datetime.now(datetime.UTC)
 
 				# convert Epoch seconds to UTC time
 				# https://stackoverflow.com/questions/1697815/how-do-you-convert-a-python-time-struct-time-object-into-a-datetime-object

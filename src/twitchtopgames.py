@@ -1,8 +1,7 @@
-import sys, time, requests, datetime
+import sys, time, requests, datetime, os
 from pymongo import MongoClient
 import progressbar # https://github.com/WoLpH/python-progressbar
-import config # config.py
-import common # common.py
+import common as common # common.py
 
 def getSteamId(name, collection_apps):
 	found = collection_apps.find_one({'name':name})
@@ -12,8 +11,8 @@ def getSteamId(name, collection_apps):
 		return None
 
 def getTwitchToken(logging):
-	# https://dev.twitch.tv/docs/authentication/getting-tokens-oauth#oauth-client-credentials-flow
-	params = {'client_id':config.twitch_client_id, 'client_secret':config.twitch_client_secret, 'grant_type':'client_credentials'}
+	# https://dev.twitch.tv/docs/authentication/getting-tokens-oauth
+	params = {'client_id':os.environ['TWITCH_CLIENT_ID'], 'client_secret':os.environ['TWITCH_CLIENT_SECRET'], 'grant_type':'client_credentials'}
 	r = requests.post("https://id.twitch.tv/oauth2/token", params=params)
 	if (r.ok):
 		data = r.json()
@@ -28,7 +27,8 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 	try:
 		logging.info("Updating Twitch top games via " + refresh_type)
 
-		client = MongoClient(host=config.mongodb_ip, port=config.mongodb_port)
+		uri = f"mongodb://root:{os.environ['MONGODB_ROOT_PASSWORD']}@{os.environ['MONGODB_IP']}:{os.environ['MONGODB_PORT']}/"
+		client = MongoClient(uri)
 		db = client['steam']
 		collection_twitchhistorical = db['twitchhistorical']
 		collection_apps = db['apps']
@@ -63,7 +63,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 				params = {'first':first_x}
 				if i != 1:
 					params = {'first':first_x, 'after':pagination}
-				r = requests.get("https://api.twitch.tv/helix/games/top", headers={'Client-ID':config.twitch_client_id, 'Authorization':"Bearer "+access_token}, params=params)
+				r = requests.get("https://api.twitch.tv/helix/games/top", headers={'Client-ID':os.environ['TWITCH_CLIENT_ID'], 'Authorization':"Bearer "+access_token}, params=params)
 				if (r.ok):
 					if (int(r.headers['Ratelimit-Remaining']) < 4):
 						logging.info("rate limit: " + r.headers['Ratelimit-Limit'])
@@ -79,14 +79,14 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 					for value in data['data']:
 						# add to our historical listing
 						# https://dev.twitch.tv/docs/api/reference/#get-streams
-						r_g = requests.get("https://api.twitch.tv/helix/streams", headers={'Client-ID': config.twitch_client_id, 'Authorization':"Bearer "+access_token}, params={'first':num_streams, 'game_id':int(value['id'])})
+						r_g = requests.get("https://api.twitch.tv/helix/streams", headers={'Client-ID': os.environ['TWITCH_CLIENT_ID'], 'Authorization':"Bearer "+access_token}, params={'first':num_streams, 'game_id':int(value['id'])})
 						if (r_g.ok):
 							if (int(r_g.headers['Ratelimit-Remaining']) < 4):
 								logging.info("rate limit: " + r_g.headers['Ratelimit-Limit'])
 								logging.info("rate limit remaining: " + r_g.headers['Ratelimit-Remaining'])
 							data_g = r_g.json()
 							for v in data_g['data']:
-								v['date'] = datetime.datetime.utcnow()
+								v['date'] = datetime.datetime.now(datetime.UTC)
 								v.pop('thumbnail_url', None)
 								v['name'] = value['name'] # pull the game name from our top games listing
 								v['gamerank'] = game_rank
