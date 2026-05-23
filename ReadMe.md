@@ -45,10 +45,24 @@ Generate the output, helpful for debugging
 helm template chart
 ```
 
-## Python Libraries
+## UV Setup
+
+Download dependencies
 
 ```shell
-pip3 install pymongo progressbar2 requests schedule beautifulsoup4
+uv sync
+```
+
+Activate environment
+
+```shell
+source .venv/bin/activate
+```
+
+Launch Jupyter
+
+```shell
+jupyter notebook
 ```
 
 ## Mongo Queries
