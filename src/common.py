@@ -23,12 +23,12 @@ def setupLogging():
         logHandler.setFormatter(logging.Formatter("[%(filename)s line:%(lineno)d] %(asctime)s - %(levelname)s - %(message)s", '%m/%d/%Y %I:%M:%S %p'))
         logHandler.suffix = "%Y-%m-%d.log"
         l.addHandler(logHandler)
-        if socket.gethostname() == "steam":
-            # we're running via Docker, also log to stdout
-            logHandler = logging.StreamHandler(sys.stdout)
-            logHandler.setLevel(logging.INFO)
-            logHandler.setFormatter(logging.Formatter("[%(filename)s line:%(lineno)d] %(asctime)s - %(levelname)s - %(message)s", '%m/%d/%Y %I:%M:%S %p'))
-            l.addHandler(logHandler)
+
+        # log to stdout
+        logHandler = logging.StreamHandler(sys.stdout)
+        logHandler.setLevel(logging.INFO)
+        logHandler.setFormatter(logging.Formatter("[%(filename)s line:%(lineno)d] %(asctime)s - %(levelname)s - %(message)s", '%m/%d/%Y %I:%M:%S %p'))
+        l.addHandler(logHandler)
 
     if 'requests' in sys.modules:
         # set the logging level for the requests library
