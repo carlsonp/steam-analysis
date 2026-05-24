@@ -7,6 +7,7 @@ requires-python = ">=3.14"
 dependencies = [
     "beautifulsoup4>=4.14.3",
     "dotenv>=0.9.9",
+    "hdbscan>=0.8.43",
     "jupyter>=1.1.1",
     "pandas>=3.0.3",
     "plotly>=6.7.0",
@@ -16,4 +17,5 @@ dependencies = [
     "requests>=2.34.2",
     "schedule>=1.2.2",
     "scikit-learn>=1.8.0",
+    "umap-learn>=0.5.12",
 ]
