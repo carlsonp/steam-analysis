@@ -14,7 +14,7 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked pip3 install pymongo progressbar2 requests schedule beautifulsoup4
+RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked pip3 install pymongo progressbar2 requests schedule beautifulsoup4 rapidfuzz
 
 WORKDIR /
 

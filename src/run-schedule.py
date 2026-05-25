@@ -1,7 +1,7 @@
 import schedule, time
 import common as common # common.py
 
-import steamtopgames as steamtopgames, steamusers as steamusers, steamreviews as steamreviews, updatepricehistory as updatepricehistory, refreshsteam as refreshsteam, downloadappids as downloadappids, opencriticsearch as opencriticsearch, opencriticgames as opencriticgames, twitchtopgames as twitchtopgames # *.py files
+import steamtopgames as steamtopgames, steamusers as steamusers, steamreviews as steamreviews, updatepricehistory as updatepricehistory, refreshsteam as refreshsteam, downloadappids as downloadappids, opencriticsearch as opencriticsearch, opencriticgames as opencriticgames, twitchtopgames as twitchtopgames, isthereanydealsearch as isthereanydealsearch # *.py files
 
 logging = common.setupLogging()
 
@@ -23,6 +23,7 @@ schedule.every(24).hours.do(downloadappids.downloadAllAppIDs)
 # schedule.every(1).hours.do(opencriticsearch.updateOpenCritic, "PARTIAL", False)
 # schedule.every(1).hours.do(opencriticgames.updateOpenCritic, "OLDEST", False)
 schedule.every(9).hours.do(twitchtopgames.updateTwitchTopGames, "TOP", False)
+schedule.every(1).hours.do(isthereanydealsearch.isthereanydealSearch)
 
 sec = 0
 while True:

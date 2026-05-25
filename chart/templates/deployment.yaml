@@ -66,6 +66,11 @@ spec:
               value: steam-analysis-mongodb.steam-analysis.svc.cluster.local
             - name: MONGODB_PORT
               value: "27017"
+            - name: ISTHEREANYDEAL_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: steam-analysis-isthereanydeal-secret
+                  key: ISTHEREANYDEAL_API_KEY
 
           {{- with .Values.resources }}
           resources:

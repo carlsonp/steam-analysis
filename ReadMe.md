@@ -22,7 +22,7 @@ docker exec -it <id> bash
 ## Docker Development
 
 ```shell
-docker compose -f docker-compose-dev.yml up -d
+docker compose -f docker-compose-dev.yml up -d --build
 ```
 
 ## Docker Teardown
