@@ -23,8 +23,8 @@ schedule.every(24).hours.do(downloadappids.downloadAllAppIDs)
 # schedule.every(1).hours.do(opencriticsearch.updateOpenCritic, "PARTIAL", False)
 # schedule.every(1).hours.do(opencriticgames.updateOpenCritic, "OLDEST", False)
 schedule.every(9).hours.do(twitchtopgames.updateTwitchTopGames, "TOP", False)
-schedule.every(1).hours.do(isthereanydealsearch.isthereanydealSearch)
-schedule.every(1).hours.do(isthereanydealhistory.isthereanydealHistory)
+schedule.every(30).minutes.do(isthereanydealsearch.isthereanydealSearch)
+schedule.every(30).minutes.do(isthereanydealhistory.isthereanydealHistory)
 
 sec = 0
 while True:
