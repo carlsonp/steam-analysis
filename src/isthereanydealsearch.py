@@ -41,7 +41,7 @@ def isthereanydealSearch(pbar=False):
 				}
 			},
 			{"$sample": {
-				"size":900
+				"size":100
 				}
 			}
 		])
