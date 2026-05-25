@@ -1,6 +1,5 @@
 import time, requests, datetime, os
 from pymongo import MongoClient
-from rapidfuzz import fuzz # https://github.com/rapidfuzz/RapidFuzz
 import progressbar # https://github.com/WoLpH/python-progressbar
 import common as common # common.py
 
@@ -64,20 +63,20 @@ def isthereanydealSearch(pbar=False):
 				# if we already have a record for that appid, don't bother doing the search, we already have a link between
 				# the isthereanydeal 'id' and the 'appid'
 				if (not entryExists(check['appid'], collection_itad)):
-					# https://docs.isthereanydeal.com/#tag/Lookup/operation/games-search-v1
+					# https://docs.isthereanydeal.com/#tag/Lookup/operation/games-lookup-v1
 					params = {
-						'title': check['name'],
+						'appid': check['appid'],
 						'key': os.environ['ISTHEREANYDEAL_API_KEY']
 					}
-					r = requests.get(requests.Request('GET', "https://api.isthereanydeal.com/games/search/v1", params=params).prepare().url)
+					r = requests.get(requests.Request('GET', "https://api.isthereanydeal.com/games/lookup/v1", params=params).prepare().url)
 					if (r.ok):
 						search_count = search_count + 1
 						data = r.json()
 						bytes_downloaded = bytes_downloaded + len(r.content)
 
-						# make sure type is equal as well as fuzzy match on title
-						if fuzz.ratio(data[0]['title'], check['name']) >= 0.85 and data[0]['type'] == check['type']:
-							insertval = data[0]
+						# make sure it's found
+						if data['found']:
+							insertval = data['game']
 							# add current datetimestamp
 							insertval['date'] = datetime.datetime.now(datetime.UTC)
 							# add appid
@@ -87,7 +86,7 @@ def isthereanydealSearch(pbar=False):
 							# insert into Mongo
 							collection_itad.insert_one(insertval)
 						else:
-							logging.info(f"{data[0]['title']} and {check['name']} don't seem to match up... skipping...")
+							logging.info(f"{check['name']} cannot be found... skipping...")
 					else:
 						logging.error("status code: " + str(r.status_code))
 						logging.error("isthereanydeal search: " + check['name'])
