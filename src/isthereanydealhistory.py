@@ -16,7 +16,7 @@ def isthereanydealHistory(pbar=False):
 		collection_itad = db['isthereanydeal']
 
 		# create an index for id, this vastly improves performance
-		collection_hist.create_index("id", unique=True)
+		collection_hist.create_index("id")
 		collection_hist.create_index("date")
 		collection_hist.create_index("appid")
 
