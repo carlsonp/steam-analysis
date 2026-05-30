@@ -32,7 +32,7 @@ def steamReviews(pbar=False):
 				bar.update(i+1)
 
 			#logging.info("Running on appid: " + str(appid))
-			r = requests.get("https://store.steampowered.com/appreviewhistogram/"+str(appid)+"?l=english&review_score_preference=0")
+			r = requests.get("https://store.steampowered.com/appreviewhistogram/"+str(appid)+"?l=english&review_score_preference=0", timeout=30)
 			if (r.ok):
 				bytes_downloaded = bytes_downloaded + len(r.content)
 

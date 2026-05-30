@@ -50,7 +50,7 @@ def isthereanydealHistory(pbar=False):
 					'id': check_id,
 					'key': os.environ['ISTHEREANYDEAL_API_KEY']
 				}
-				r = requests.get(requests.Request('GET', "https://api.isthereanydeal.com/games/info/v2", params=params).prepare().url)
+				r = requests.get(requests.Request('GET', "https://api.isthereanydeal.com/games/info/v2", params=params, timeout=30).prepare().url)
 				if (r.ok):
 					data = r.json()
 					bytes_downloaded = bytes_downloaded + len(r.content)
@@ -69,7 +69,7 @@ def isthereanydealHistory(pbar=False):
 						'country': "US",
 						'key': os.environ['ISTHEREANYDEAL_API_KEY']
 					}
-					r_second = requests.get(requests.Request('GET', "https://api.isthereanydeal.com/stats/waitlist/v1", params=params).prepare().url)
+					r_second = requests.get(requests.Request('GET', "https://api.isthereanydeal.com/stats/waitlist/v1", params=params, timeout=30).prepare().url)
 					if (r_second.ok):
 						insert_record['waitlist_stats'] = r_second.json()
 

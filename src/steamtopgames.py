@@ -24,7 +24,8 @@ def steamTopGames(pbar=False):
 
         r = requests.get(
             "https://api.steampowered.com/ISteamChartsService/GetGamesByConcurrentPlayers/v1/",
-            params={"key": os.environ["STEAM_API_KEY"]}
+            params={"key": os.environ["STEAM_API_KEY"]},
+            timeout=30
         )
         if (r.ok):
             data = r.json()

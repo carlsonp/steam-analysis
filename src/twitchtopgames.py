@@ -13,7 +13,7 @@ def getSteamId(name, collection_apps):
 def getTwitchToken(logging):
 	# https://dev.twitch.tv/docs/authentication/getting-tokens-oauth
 	params = {'client_id':os.environ['TWITCH_CLIENT_ID'], 'client_secret':os.environ['TWITCH_CLIENT_SECRET'], 'grant_type':'client_credentials'}
-	r = requests.post("https://id.twitch.tv/oauth2/token", params=params)
+	r = requests.post("https://id.twitch.tv/oauth2/token", params=params, timeout=30)
 	if (r.ok):
 		data = r.json()
 		logging.info("Obtained Twitch access token, it expires in: " + str(datetime.timedelta(seconds=data['expires_in'])))
@@ -63,7 +63,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 				params = {'first':first_x}
 				if i != 1:
 					params = {'first':first_x, 'after':pagination}
-				r = requests.get("https://api.twitch.tv/helix/games/top", headers={'Client-ID':os.environ['TWITCH_CLIENT_ID'], 'Authorization':"Bearer "+access_token}, params=params)
+				r = requests.get("https://api.twitch.tv/helix/games/top", headers={'Client-ID':os.environ['TWITCH_CLIENT_ID'], 'Authorization':"Bearer "+access_token}, params=params, timeout=30)
 				if (r.ok):
 					if (int(r.headers['Ratelimit-Remaining']) < 4):
 						logging.info("rate limit: " + r.headers['Ratelimit-Limit'])
@@ -79,7 +79,7 @@ def updateTwitchTopGames(refresh_type="TOP", pbar=False):
 					for value in data['data']:
 						# add to our historical listing
 						# https://dev.twitch.tv/docs/api/reference/#get-streams
-						r_g = requests.get("https://api.twitch.tv/helix/streams", headers={'Client-ID': os.environ['TWITCH_CLIENT_ID'], 'Authorization':"Bearer "+access_token}, params={'first':num_streams, 'game_id':int(value['id'])})
+						r_g = requests.get("https://api.twitch.tv/helix/streams", headers={'Client-ID': os.environ['TWITCH_CLIENT_ID'], 'Authorization':"Bearer "+access_token}, params={'first':num_streams, 'game_id':int(value['id'])}, timeout=30)
 						if (r_g.ok):
 							if (int(r_g.headers['Ratelimit-Remaining']) < 4):
 								logging.info("rate limit: " + r_g.headers['Ratelimit-Limit'])

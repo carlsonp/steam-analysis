@@ -73,7 +73,7 @@ def updateOpenCritic(refresh_type="PARTIAL", pbar=False):
 				if (not entryExistsSteam(appids[i], to_update[i], collection_oc)):
 					# OpenCritic Game API e.g.
 					# https://api.opencritic.com/api/game/search?criteria=steel%20division%202R
-					r = requests.get(requests.Request('GET', "https://api.opencritic.com/api/game/search", params={'criteria':name}).prepare().url)
+					r = requests.get(requests.Request('GET', "https://api.opencritic.com/api/game/search", params={'criteria':name}, timeout=30).prepare().url)
 					if (r.ok):
 						search_count = search_count + 1
 						data = r.json()

@@ -72,7 +72,7 @@ def refreshSteamAppIDs(refresh_type="SAMPLING_GAMES", pbar=False):
 		for i,appid in enumerate(to_update):
 			if (pbar):
 				bar.update(i+1)
-			r = requests.get("https://store.steampowered.com/api/appdetails?appids="+str(appid)+"&cc=us&l=en")
+			r = requests.get("https://store.steampowered.com/api/appdetails?appids="+str(appid)+"&cc=us&l=en", timeout=30)
 
 			if (r.ok):
 				try:

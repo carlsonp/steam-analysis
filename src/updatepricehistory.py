@@ -71,7 +71,7 @@ def updatePriceHistory(refresh_type="FULL", pbar=False):
 					# https://github.com/BrakeValve/dataflow/issues/5
 					# e.g.
 					# https://store.steampowered.com/api/appdetails?appids=662400,833310,317832,39150,830810,224540,931720,261900,431290,914410,812110,216464,826503,509681,71115,24679,231474,202452,863900,457100&cc=us&l=en&filters=price_overview
-					r = requests.get("https://store.steampowered.com/api/appdetails?appids="+appids_str+"&cc=us&l=en&filters=price_overview")
+					r = requests.get("https://store.steampowered.com/api/appdetails?appids="+appids_str+"&cc=us&l=en&filters=price_overview", timeout=30)
 					if (r.ok):
 						data = r.json()
 						bytes_downloaded = bytes_downloaded + len(r.content)

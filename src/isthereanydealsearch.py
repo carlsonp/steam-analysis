@@ -68,7 +68,7 @@ def isthereanydealSearch(pbar=False):
 						'appid': check['appid'],
 						'key': os.environ['ISTHEREANYDEAL_API_KEY']
 					}
-					r = requests.get(requests.Request('GET', "https://api.isthereanydeal.com/games/lookup/v1", params=params).prepare().url)
+					r = requests.get(requests.Request('GET', "https://api.isthereanydeal.com/games/lookup/v1", params=params, timeout=30).prepare().url)
 					if (r.ok):
 						search_count = search_count + 1
 						data = r.json()
