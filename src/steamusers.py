@@ -20,7 +20,7 @@ def steamUsers(pbar=False):
         # pull Steam online users over the last 24 hours
         # https://store.steampowered.com/stats/
 
-        r = requests.get("https://store.steampowered.com/stats/userdata.json")
+        r = requests.get("https://store.steampowered.com/stats/userdata.json", timeout=30)
         if (r.ok):
             data = r.json()[0]['data']
 

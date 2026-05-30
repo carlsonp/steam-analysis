@@ -43,7 +43,7 @@ def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 			try:
 				# OpenCritic Game API e.g.
 				# https://opencritic.com/api/game/7592
-				r = requests.get(requests.Request('GET', "https://opencritic.com/api/game/" + str(oc_id), timeout=30).prepare().url)
+				r = requests.get(requests.Request('GET', "https://opencritic.com/api/game/" + str(oc_id)).prepare().url, timeout=30)
 				if (r.ok):
 					data = r.json()
 					bytes_downloaded = bytes_downloaded + len(r.content)
@@ -63,7 +63,7 @@ def updateOpenCritic(refresh_type="OLDEST", pbar=False):
 				# grab review information which is a separate URL
 				# e.g. https://opencritic.com/api/review/game/7592
 
-				r = requests.get(requests.Request('GET', "https://opencritic.com/api/review/game/" + str(oc_id), timeout=30).prepare().url)
+				r = requests.get(requests.Request('GET', "https://opencritic.com/api/review/game/" + str(oc_id)).prepare().url, timeout=30)
 				if (r.ok):
 					data = r.json()
 					bytes_downloaded = bytes_downloaded + len(r.content)
