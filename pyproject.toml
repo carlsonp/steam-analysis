@@ -19,5 +19,6 @@ dependencies = [
     "requests>=2.34.2",
     "schedule>=1.2.2",
     "scikit-learn>=1.8.0",
+    "shap>=0.52.0",
     "umap-learn>=0.5.12",
 ]
