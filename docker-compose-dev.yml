@@ -23,7 +23,7 @@ services:
       - mongo
 
   mongo:
-    image: mongo:7.0.37
+    image: mongo:8.3.4
     restart: unless-stopped
     container_name: mongo
     hostname: mongo
