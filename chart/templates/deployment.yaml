@@ -9,7 +9,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   strategy:
-    type: {{ .Values.deployment.strategy.type | default "RollingUpdate" }}
+    type: {{ .Values.deployment.strategy.type | default "Recreate" }}
   selector:
     matchLabels:
       {{- include "chart.selectorLabels" . | nindent 6 }}
