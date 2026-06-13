@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: mongodb
-          image: mongo:7.0.34
+          image: mongo:7.0.37
           imagePullPolicy: IfNotPresent
           env:
             - name: MONGO_INITDB_ROOT_PASSWORD
