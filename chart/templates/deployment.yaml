@@ -8,6 +8,8 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  strategy:
+    type: {{ .Values.deployment.strategy.type | default "RollingUpdate" }}
   selector:
     matchLabels:
       {{- include "chart.selectorLabels" . | nindent 6 }}
