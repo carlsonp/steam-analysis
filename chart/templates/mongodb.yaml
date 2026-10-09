@@ -22,7 +22,7 @@ spec:
       {{- end }}
       containers:
         - name: mongodb
-          image: mongo:8.3.11
+          image: mongo:9.0.2
           imagePullPolicy: IfNotPresent
           env:
             - name: MONGO_INITDB_ROOT_PASSWORD
